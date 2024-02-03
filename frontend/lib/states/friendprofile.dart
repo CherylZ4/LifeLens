@@ -94,7 +94,8 @@ class _FriendProfileState extends State<FriendProfile> {
               leading: Icon(Icons.food_bank),
               title: Text('Food Restriction?'),
               subtitle: Text("None"),
-              trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              trailing:
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
             ),
           ],
         ),
