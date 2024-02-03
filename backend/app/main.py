@@ -275,13 +275,23 @@ def add_user(record: AddMember):
                     members = _record["members"]["value"]
             if id == -1:
                 raise HTTPException(status_code=201, detail="group now found")
-            members += " "
-            members += record.new_username
-            data = {"app": 4, "id": id, "record": {"members": {"value": members}}}
+            # check duplicates
+            member_list = members.split()
+            flag = False
+            for member in member_list:
+                if member == record.new_username:
+                    flag = True
+            if not (flag):
+                members += " " + record.new_username
+            data = {
+                "app": 4,
+                "id": id,
+                "record": {"members": {"value": members}},
+            }
             kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
             response = requests.put(kintone_url_2, json=data, headers=headers)
             if response.status_code == 200:
-                return {members}
+                return {"members": members.split()}
             else:
                 raise HTTPException(
                     status_code=response.status_code,
