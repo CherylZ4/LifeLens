@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/dateselection.dart';
 
 class PronounScreen extends StatefulWidget {
   const PronounScreen({super.key});
@@ -33,15 +34,20 @@ class _PronounScreenState extends State<PronounScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(30, 30, 30, 70),
+          padding: const EdgeInsets.fromLTRB(60, 30, 60, 30),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text(
-                "What's your pronoun?",
-                style: TextStyle(
-                  fontSize: 30,
-                ),
+                "Add pronoun",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "Add your pronouns so your friends can address you correctly",
+                style: TextStyle(fontSize: 15),
               ),
               const SizedBox(
                 height: 20,
@@ -165,7 +171,17 @@ class _PronounScreenState extends State<PronounScreen> {
                           ),
                         ),
                       ),
-                      onPressed: pronoun != "" ? () {} : null,
+                      onPressed: pronoun != ""
+                          ? () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DateSelectionScreen(
+                                            restorationId: "Date1",
+                                          )));
+                            }
+                          : null,
                       child: Text("Next")))
             ],
           ),
