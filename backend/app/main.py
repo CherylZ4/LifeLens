@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+import json
 from openai import OpenAI
 import apikeys
 
@@ -313,7 +314,7 @@ def add_user(record: AddMember):
 
 
 # birthday
-@app.get("/group/birthday/{group_name}")
+@app.get("/group/birthdays/{group_name}")
 def get_birthday_reminders(group_name: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
@@ -382,17 +383,55 @@ def get_birthday_reminders(group_name: str):
                 # Handle any exceptions that occur during the API call
                 raise HTTPException(status_code=500, detail=str(e))
 
-            completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": group_info["members"]
-                        + ", try to count how many names are there",
-                    },
-                ],
+        else:
+            # Raise an HTTPException if the request was unsuccessful
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
             )
-            return completion.choices[0].message
+    except Exception as e:
+        # Handle any exceptions that occur during the API call
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# birthday
+@app.get("/group/birthday/{username}")
+def get_birthday_suggestions(username: str):
+    # Replace the URL with your actual Kintone API URL
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
+
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
+
+    try:
+        # Make the API call to Kintone
+        response = requests.get(kintone_url, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # return response.json()
+            original_data = response.json()
+
+            # Traverse each record and extract user information
+            for record in original_data["records"]:
+                # return record
+                if record["username"]["value"] == username:
+                    user_interest = record["interests"]["value"]
+                    completion = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {
+                                "role": "user",
+                                "content": "give me 10 birthday gift recommendations given the person's interest is "
+                                + user_interest
+                                + '. Only list the items and return it only in an string of items with "," in between, only 10 lines, make it brief',
+                            },
+                        ],
+                    )
+                    text_generated = completion.choices[0].message
+                    # return text_generated["content"]
+                    return {"items": text_generated.content.split("\n")}
+
+            raise HTTPException(status_code=205, detail="user not found")
 
         else:
             # Raise an HTTPException if the request was unsuccessful
