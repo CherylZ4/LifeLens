@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/pronounscreen.dart';
+import 'package:lifelens/states/homescreen.dart';
 
-class NameCreation extends StatefulWidget {
-  const NameCreation({super.key});
+class ContactInfoPage extends StatefulWidget {
+  const ContactInfoPage({super.key});
 
   @override
-  State<NameCreation> createState() => _NameCreationState();
+  State<ContactInfoPage> createState() => _ContactInfoPageState();
 }
 
-class _NameCreationState extends State<NameCreation>
+class _ContactInfoPageState extends State<ContactInfoPage>
     with TickerProviderStateMixin {
-  String name = "";
-  late TextEditingController _controller;
   late AnimationController animationController;
+  late TextEditingController _phonecontroller;
+  late TextEditingController _addresscontroller;
+  String address = "";
+  String phone = "";
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _phonecontroller = TextEditingController();
+    _addresscontroller = TextEditingController();
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(),
     )..addListener(() {
         setState(() {});
       });
-    final Tween<double> _animationTween = Tween<double>(begin: 0.0, end: 0.2);
+    final Tween<double> _animationTween = Tween<double>(begin: 0.6, end: 0.8);
     animationController.animateTo(
       _animationTween.end!,
       duration: const Duration(milliseconds: 500),
@@ -34,7 +37,8 @@ class _NameCreationState extends State<NameCreation>
   @override
   void dispose() {
     animationController.dispose();
-    _controller.dispose();
+    _phonecontroller.dispose();
+    _addresscontroller.dispose();
     super.dispose();
   }
 
@@ -56,14 +60,14 @@ class _NameCreationState extends State<NameCreation>
               height: 20,
             ),
             const Text(
-              "Add name",
+              "Add contact info",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 20,
             ),
             const Text(
-              "Add your name so your friends can recognize you",
+              "Add contact info so your friends can reach you",
               style: TextStyle(fontSize: 15),
             ),
             const SizedBox(
@@ -72,14 +76,26 @@ class _NameCreationState extends State<NameCreation>
             TextField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Name',
+                labelText: 'Address',
               ),
-              controller: _controller,
+              controller: _addresscontroller,
               onChanged: (value) {
                 setState(() {
-                  name = value;
-                  print(name);
+                  address = value;
                 });
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Phone number',
+              ),
+              controller: _phonecontroller,
+              onChanged: (value) {
+                phone = value;
               },
             ),
             const Spacer(),
@@ -93,13 +109,13 @@ class _NameCreationState extends State<NameCreation>
                         ),
                       ),
                     ),
-                    onPressed: name != ""
+                    onPressed: true
                         ? () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const PronounScreen()));
+                                        const HomeScreen(groupname: "no api")));
                           }
                         : null,
                     child: const Text("Next")))

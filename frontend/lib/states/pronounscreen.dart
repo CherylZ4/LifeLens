@@ -8,21 +8,36 @@ class PronounScreen extends StatefulWidget {
   State<PronounScreen> createState() => _PronounScreenState();
 }
 
-class _PronounScreenState extends State<PronounScreen> {
+class _PronounScreenState extends State<PronounScreen>
+    with TickerProviderStateMixin {
   bool showOther = false;
 
   TextEditingController otherPronounController = TextEditingController();
   bool isOther = false;
   String pronoun = "";
   late TextEditingController _controller;
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(),
+    )..addListener(() {
+        setState(() {});
+      });
+    final Tween<double> _animationTween = Tween<double>(begin: 0.2, end: 0.4);
+    animationController.animateTo(
+      _animationTween.end!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -38,6 +53,13 @@ class _PronounScreenState extends State<PronounScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              LinearProgressIndicator(
+                value: animationController.value,
+                semanticsLabel: 'Linear progress indicator',
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               const Text(
                 "Add pronoun",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
@@ -50,7 +72,7 @@ class _PronounScreenState extends State<PronounScreen> {
                 style: TextStyle(fontSize: 15),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               SizedBox(
                 width: double.maxFinite,
@@ -75,7 +97,7 @@ class _PronounScreenState extends State<PronounScreen> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               SizedBox(
                 width: double.maxFinite,
@@ -100,7 +122,7 @@ class _PronounScreenState extends State<PronounScreen> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               SizedBox(
                 width: double.maxFinite,
@@ -125,7 +147,7 @@ class _PronounScreenState extends State<PronounScreen> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               // ignore: sized_box_for_whitespace
               SizedBox(
@@ -150,14 +172,25 @@ class _PronounScreenState extends State<PronounScreen> {
                 ),
               ),
               isOther
-                  ? TextField(
-                      controller: _controller,
-                      onChanged: (value) {
-                        setState(() {
-                          pronoun = value;
-                          print(pronoun);
-                        });
-                      },
+                  ? Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Pronouns',
+                          ),
+                          controller: _controller,
+                          onChanged: (value) {
+                            setState(() {
+                              pronoun = value;
+                              print(pronoun);
+                            });
+                          },
+                        )
+                      ],
                     )
                   : Container(),
               const Spacer(),

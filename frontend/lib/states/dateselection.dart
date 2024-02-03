@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/contactinfo.dart';
 
 class DateSelectionScreen extends StatefulWidget {
   const DateSelectionScreen({super.key, this.restorationId});
@@ -10,16 +10,30 @@ class DateSelectionScreen extends StatefulWidget {
 }
 
 class _DateSelectionScreenState extends State<DateSelectionScreen>
-    with RestorationMixin {
+    with RestorationMixin, TickerProviderStateMixin {
   late TextEditingController _controller;
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(),
+    )..addListener(() {
+        setState(() {});
+      });
+    final Tween<double> _animationTween = Tween<double>(begin: 0.4, end: 0.6);
+    animationController.animateTo(
+      _animationTween.end!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -28,7 +42,7 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
   String selectedDay = "";
   String selectedMonth = "";
   String selectedYear = "";
-  RegExp regex = RegExp(r'^(0[1-9]|[1-2][0-9]|3[0-1])/(0?[1-9]|1[0-2])/\d{4}$');
+  RegExp regex = RegExp(r'^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/\d{4}$');
   @override
   String? get restorationId => widget.restorationId;
 
@@ -91,6 +105,13 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            LinearProgressIndicator(
+              value: animationController.value,
+              semanticsLabel: 'Linear progress indicator',
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             const Text(
               "Add birthday",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
@@ -113,6 +134,7 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                 });
               },
               decoration: InputDecoration(
+                helperText: "DD/MM/YYYY",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () {
@@ -139,8 +161,8 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const HomeScreen(
-                                        groupname: "TEST NO API")));
+                                    builder: (context) =>
+                                        const ContactInfoPage()));
                           }
                         : null,
                     child: Text("Next")))
