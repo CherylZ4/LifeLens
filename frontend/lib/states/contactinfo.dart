@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/additionalinfo.dart';
 
 class ContactInfoPage extends StatefulWidget {
   const ContactInfoPage({super.key});
@@ -145,7 +145,7 @@ class _ContactInfoPageState extends State<ContactInfoPage>
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const HomeScreen(groupname: "no api")));
+                                        const AdditionalInfoPage()));
                           }
                         : null,
                     child: const Text("Next")))
