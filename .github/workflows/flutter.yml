@@ -27,7 +27,9 @@ jobs:
         rm -Rf ios/Flutter/Flutter.framework
         rm -Rf ios/Flutter/Flutter.podspec
         flutter pub get
-    - run: flutter build ios --release --no-codesign -v
+    - run: |
+        cd frontend
+        flutter build ios --release --no-codesign -v
     - run: |
         cd frontend
         mkdir /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Payload
@@ -80,8 +82,12 @@ jobs:
         cd frontend
         flutter clean
         flutter pub get
-    - run: flutter build apk --split-per-abi --release -v
-    - run: flutter build appbundle --release -v
+    - run: |
+        cd frontend
+        flutter build apk --split-per-abi --release -v
+    - run: |
+        cd frontend
+        flutter build appbundle --release -v
     - id: flutter-action
       uses: subosito/flutter-action@v2
       with:
