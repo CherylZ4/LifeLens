@@ -2,8 +2,10 @@ from ast import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+from openai import OpenAI
 import logging
 
+client = OpenAI(api_key="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")
 app = FastAPI()
 
 
@@ -307,3 +309,15 @@ def add_user(record: AddMember):
     except Exception as e:
         # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# birthday
+@app.get("/group/birthday/{group_name}")
+def get_birthday_reminders(group_name: str):
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": group_name + ", try to interpret this name"},
+        ],
+    )
+    return completion.choices[0].message
