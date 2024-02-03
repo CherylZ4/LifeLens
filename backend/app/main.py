@@ -331,11 +331,11 @@ def get_group_list_for_user(username: str):
         response = requests.get(kintone_url, headers=headers)
         if response.status_code == 200:
             original_data = response.json()
-            transformed_data = {"group": []}
+            transformed_data = {"groups": []}
             for record in original_data["records"]:
                 members = record["members"]["value"].split()
                 if username in members:
-                    transformed_data["group"].append(record["groupname"]["value"])
+                    transformed_data["groups"].append(record["groupname"]["value"])
             return transformed_data
         else:
             raise HTTPException(
