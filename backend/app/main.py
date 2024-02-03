@@ -8,7 +8,6 @@ app = FastAPI()
 
 
 class NewUser(BaseModel):
-    # Define the fields of the new record
     first_name: str
     last_name: str
     email: str
@@ -39,23 +38,21 @@ async def add_user(record: NewUser):
     # Prepare the data for the new record
     data = {
         "app": 3,
-        "record": [
-            {
-                "first_name": {"value": record.first_name},
-                "last_name": {"value": record.last_name},
-                "email": {"value": record.email},
-                "birthday": {"value": record.birthday},
-                "address": {"value": record.address},
-                "food_restrictions": {"value": record.food_restrictions},
-                "interests": {"value": record.interests},
-                "username": {"value": record.username},
-            }
-        ],
+        "record": {
+            "first_name": {"value": record.first_name},
+            "last_name": {"value": record.last_name},
+            "email": {"value": record.email},
+            "birthday": {"value": record.birthday},
+            "address": {"value": record.address},
+            "food_restrictions": {"value": record.food_restrictions},
+            "interests": {"value": record.interests},
+            "username": {"value": record.username},
+        },
     }
 
     headers = {
         "Content-Type": "application/json",
-        "X-Cybozu-API-Token": "your_api_token_here",
+        "X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc",
     }
 
     try:
@@ -66,7 +63,7 @@ async def add_user(record: NewUser):
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"error": "Failed to add record"}
+            return {"error": response.status_code}
     except Exception as e:
         return {"error": str(e)}
 
@@ -210,12 +207,10 @@ async def get_group_by_name(groupname: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/group/add/")  # this is failed
+@app.post("/group/new/")
 def add_user(record: NewGroup):
     # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
-
-    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
 
     # Prepare the data for the new record
     data = {
@@ -244,6 +239,9 @@ def add_user(record: NewGroup):
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"error": "Failed to add record"}
+            return {"error": response.status_code}
     except Exception as e:
         return {"error": str(e)}
+
+
+# @app.put("/group/new/")
