@@ -13,11 +13,14 @@ class InitializationScreen extends StatefulWidget {
 class _InitializationScreenState extends State<InitializationScreen> {
   Credentials? _credentials;
   late Auth0 auth0;
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
-    auth0 = Auth0('dev-jgv85hakgz2rswn1.us.auth0.com', 'FtGV0LeFqzUcE904GQFpHpj5ZSZvyDxO');
+    auth0 = Auth0('dev-jgv85hakgz2rswn1.us.auth0.com',
+        'FtGV0LeFqzUcE904GQFpHpj5ZSZvyDxO');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,23 +54,20 @@ class _InitializationScreenState extends State<InitializationScreen> {
                         ),
                       ),
                       onPressed: () async {
-                        if (_credentials == null){
-                          try{final credentials =
-                          await auth0.webAuthentication().login();
+                        if (_credentials == null) {
+                          try {
+                            final credentials =
+                                await auth0.webAuthentication().login();
 
-                        setState(() {
-                          _credentials = credentials;
-                        });
-                        checkAndNavigate();
-                        print("pog worked");
+                            setState(() {
+                              _credentials = credentials;
+                            });
+                            checkAndNavigate();
+                            print("pog worked");
+                          } catch (e) {
+                            print("failed");
+                          }
                         }
-                      
-                        catch (e){
-                          print("failed");
-                        }
-                          
-                        }
-                        
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
@@ -82,15 +82,16 @@ class _InitializationScreenState extends State<InitializationScreen> {
       )),
     );
   }
+
   void checkAndNavigate() {
-  if (_credentials != null) {
-    // Navigate to HomeScreen when _credentials is not null
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeScreen(groupname: "haha"),
-      ),
-    );
+    if (_credentials != null) {
+      // Navigate to HomeScreen when _credentials is not null
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(groupname: "haha"),
+        ),
+      );
+    }
   }
-}
 }
