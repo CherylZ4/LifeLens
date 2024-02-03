@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lifelens/states/homescreen.dart';
 import 'package:lifelens/states/namecreation.dart';
@@ -42,40 +44,50 @@ class _InitializationScreenState extends State<InitializationScreen> {
             const SizedBox(
               height: 60,
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: FilledButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_credentials == null) {
-                          try {
-                            final credentials =
-                                await auth0.webAuthentication().login();
-
-                            setState(() {
-                              _credentials = credentials;
-                            });
-                            checkAndNavigate();
-                            print("pog worked");
-                          } catch (e) {
-                            print("failed");
-                          }
-                        }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child:
-                            Text('Get Started', style: TextStyle(fontSize: 17)),
-                      )),
+            SizedBox(
+              width: double.maxFinite,
+              child: FilledButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<OutlinedBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
                 ),
-              ],
+                onPressed: () async {
+                  if (_credentials == null) {
+                    try {
+                      final credentials =
+                          await auth0.webAuthentication().login();
+
+                      setState(() {
+                        isLoading = true;
+                        _credentials = credentials;
+                      });
+                      Timer(const Duration(seconds: 1), () {
+                        checkAndNavigate();
+                      });
+                    } catch (e) {
+                      print("failed");
+                    }
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: isLoading
+                      ? Container(
+                          width: 24,
+                          height: 24,
+                          padding: const EdgeInsets.all(2.0),
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text('Get Started',
+                          style: TextStyle(fontSize: 17)),
+                ),
+              ),
             ),
           ],
         ),
