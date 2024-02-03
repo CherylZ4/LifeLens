@@ -30,9 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.3
-  flutter_appauth: ^1.1.0
-  flutter_secure_storage: ^4.2.0
   flutter_mobx: ^2.2.0
   mobx: ^2.3.0
 
@@ -53,8 +50,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
