@@ -6,6 +6,8 @@ WORKDIR /python-docker
 
 # 
 COPY /backend/requirements.txt requirements.txt
+
+COPY /backend/appkeys.py appkeys.py
 # 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
