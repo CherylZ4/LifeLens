@@ -10,16 +10,30 @@ class DateSelectionScreen extends StatefulWidget {
 }
 
 class _DateSelectionScreenState extends State<DateSelectionScreen>
-    with RestorationMixin {
+    with RestorationMixin, TickerProviderStateMixin {
   late TextEditingController _controller;
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(),
+    )..addListener(() {
+        setState(() {});
+      });
+    final Tween<double> _animationTween = Tween<double>(begin: 0.4, end: 0.6);
+    animationController.animateTo(
+      _animationTween.end!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -91,6 +105,13 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            LinearProgressIndicator(
+              value: animationController.value,
+              semanticsLabel: 'Linear progress indicator',
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             const Text(
               "Add birthday",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),

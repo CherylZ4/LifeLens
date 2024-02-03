@@ -8,17 +8,32 @@ class NameCreation extends StatefulWidget {
   State<NameCreation> createState() => _NameCreationState();
 }
 
-class _NameCreationState extends State<NameCreation> {
+class _NameCreationState extends State<NameCreation>
+    with TickerProviderStateMixin {
   String name = "";
   late TextEditingController _controller;
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(),
+    )..addListener(() {
+        setState(() {});
+      });
+    final Tween<double> _animationTween = Tween<double>(begin: 0.0, end: 0.2);
+    animationController.animateTo(
+      _animationTween.end!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -33,6 +48,13 @@ class _NameCreationState extends State<NameCreation> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            LinearProgressIndicator(
+              value: animationController.value,
+              semanticsLabel: 'Linear progress indicator',
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             const Text(
               "Add name",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
@@ -48,6 +70,10 @@ class _NameCreationState extends State<NameCreation> {
               height: 20,
             ),
             TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Name',
+              ),
               controller: _controller,
               onChanged: (value) {
                 setState(() {

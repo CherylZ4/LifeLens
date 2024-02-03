@@ -8,21 +8,36 @@ class PronounScreen extends StatefulWidget {
   State<PronounScreen> createState() => _PronounScreenState();
 }
 
-class _PronounScreenState extends State<PronounScreen> {
+class _PronounScreenState extends State<PronounScreen>
+    with TickerProviderStateMixin {
   bool showOther = false;
 
   TextEditingController otherPronounController = TextEditingController();
   bool isOther = false;
   String pronoun = "";
   late TextEditingController _controller;
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(),
+    )..addListener(() {
+        setState(() {});
+      });
+    final Tween<double> _animationTween = Tween<double>(begin: 0.2, end: 0.4);
+    animationController.animateTo(
+      _animationTween.end!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   void dispose() {
+    animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -38,6 +53,13 @@ class _PronounScreenState extends State<PronounScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              LinearProgressIndicator(
+                value: animationController.value,
+                semanticsLabel: 'Linear progress indicator',
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               const Text(
                 "Add pronoun",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
