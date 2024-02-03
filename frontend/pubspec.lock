@@ -25,6 +25,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  auth0_flutter:
+    dependency: "direct main"
+    description:
+      name: auth0_flutter
+      sha256: "2d29c95fd25164c9b9c88beefc19619b213e1c16e1ab067e926005d675cda344"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  auth0_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: auth0_flutter_platform_interface
+      sha256: fdd22d22e3f2c45a4db5579f65d358aaed3d4d51eb9994031a497af5dc5e4736
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -142,6 +158,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  flutter_mobx:
+    dependency: "direct main"
+    description:
+      name: flutter_mobx
+      sha256: "4a5d062ff85ed3759f4aac6410ff0ffae32e324b2e71ca722ae1b37b32e865f4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0+2"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -235,6 +259,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  mobx:
+    dependency: "direct main"
+    description:
+      name: mobx
+      sha256: "74ee54012dc7c1b3276eaa960a600a7418ef5f9997565deb8fca1fd88fb36b78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0+1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -275,6 +315,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.7.4"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      sha256: "9a96a0a19b594dbc5bf0f1f27d2bc67d5f95957359b461cd9feb44ed6ae75096"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
   sky_engine:
     dependency: transitive
     description: flutter
