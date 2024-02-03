@@ -147,7 +147,7 @@ class _PronounScreenState extends State<PronounScreen>
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               // ignore: sized_box_for_whitespace
               SizedBox(
@@ -175,7 +175,7 @@ class _PronounScreenState extends State<PronounScreen>
                   ? Column(
                       children: <Widget>[
                         const SizedBox(
-                          height: 20,
+                          height: 15,
                         ),
                         TextField(
                           decoration: const InputDecoration(
