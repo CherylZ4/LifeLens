@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/namecreation.dart';
 
 class InitializationScreen extends StatefulWidget {
   const InitializationScreen({super.key});
@@ -42,12 +42,10 @@ class _InitializationScreenState extends State<InitializationScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomeScreen(
-                                      groupname: "test name (no api call)",
-                                    )));
+                                builder: (context) => const NameCreation()));
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
