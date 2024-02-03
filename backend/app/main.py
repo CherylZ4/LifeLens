@@ -23,6 +23,13 @@ class NewUser(BaseModel):
     phone_number: str
 
 
+class ModifyUser(BaseModel):
+    username: str
+    address: str
+    food_restrictions: list[str]
+    interests: str
+
+
 class NewGroup(BaseModel):
     groupname: str
     description: str
@@ -52,6 +59,52 @@ async def does_user_exist(username: str):
                 if record["username"]["value"] == username:
                     return True
             return False
+        else:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.put("/user/modify")
+async def change_user_data(new_data: ModifyUser):
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
+
+    id = -1
+
+    try:
+        response = requests.get(kintone_url, headers=headers)
+        if response.status_code == 200:
+            original_data = response.json()
+            for _record in original_data["records"]:
+                _username = _record["username"]["value"]
+                if _username == new_data.username:
+                    id = _record["$id"]["value"]
+            if id == -1:
+                raise HTTPException(status_code=201, detail="group now found")
+            data = {
+                "app": 3,
+                "id": id,
+                "record": {
+                    "address": {"value": new_data.address},
+                    "food_restrictions": {
+                        "value": new_data.food_restrictions,
+                    },
+                    "interests": {"value": new_data.interests},
+                },
+            }
+            kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
+            response = requests.put(kintone_url_2, json=data, headers=headers)
+            if response.status_code == 200:
+                return {"message": "user information successfully updated"}
+            else:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail="Failed to modify data from Kintone API",
+                )
         else:
             raise HTTPException(
                 status_code=response.status_code,
