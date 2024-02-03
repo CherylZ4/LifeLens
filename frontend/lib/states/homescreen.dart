@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
           child: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -41,6 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: const Text('+ Add Friend')),
                   ],
+                ),
+                Divider(),
+                FriendTile(name: "Conrad"),
+                SizedBox(height: 10),
+                FriendTile(name: "Sigmund"),
+                Spacer(),
+                const Text(
+                  "Upcoming birthdays",
+                  style: TextStyle(fontSize: 25),
                 ),
                 Divider(),
                 FriendTile(name: "Conrad"),

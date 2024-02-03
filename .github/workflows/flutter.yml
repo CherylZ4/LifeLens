@@ -27,11 +27,13 @@ jobs:
         rm -Rf ios/Flutter/Flutter.framework
         rm -Rf ios/Flutter/Flutter.podspec
         flutter pub get
-    - run: flutter build ios --release --no-codesign -v
+    - run: |
+        cd frontend
+        flutter build ios --release --no-codesign -v
     - run: |
         cd frontend
         mkdir /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Payload
-        cp -r /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Runner.app /Users/runner/work/lifelens/lifelens/build/ios/iphoneos/Payload/
+        cp -r /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Runner.app /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Payload/
         cd /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/
         zip -r Payload.zip Payload
         mv Payload.zip Lifelens.ipa
@@ -52,15 +54,6 @@ jobs:
         name: Lifelens.ipa
         path: |
           /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Lifelens.ipa
-    - uses: IsaacShelton/update-existing-release@v1.3.1
-      with:
-        token: ${{secrets.GITHUB_TOKEN}}
-        release: "Nightly iOS Release"
-        tag: "nightly"
-        prerelease: true
-        replace: true
-        files: >
-          /Users/runner/work/lifelensn/lifelens/frontend/build/ios/iphoneos/Lifelens.ipa
 
   android:
     name: Build android application
@@ -80,8 +73,12 @@ jobs:
         cd frontend
         flutter clean
         flutter pub get
-    - run: flutter build apk --split-per-abi --release -v
-    - run: flutter build appbundle --release -v
+    - run: |
+        cd frontend
+        flutter build apk --split-per-abi --release -v
+    - run: |
+        cd frontend
+        flutter build appbundle --release -v
     - id: flutter-action
       uses: subosito/flutter-action@v2
       with:
