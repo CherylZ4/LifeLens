@@ -322,6 +322,30 @@ def add_user(record: AddMember):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/grouplist/{username}")
+def get_group_list_for_user(username: str):
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
+
+    try:
+        response = requests.get(kintone_url, headers=headers)
+        if response.status_code == 200:
+            original_data = response.json()
+            transformed_data = {"group": []}
+            for record in original_data["records"]:
+                members = record["members"]["value"].split()
+                if username in members:
+                    transformed_data["group"].append(record["groupname"]["value"])
+            return transformed_data
+        else:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # birthday
 @app.get("/group/birthdays/{group_name}")
 def get_birthday_reminders(group_name: str):
@@ -387,7 +411,6 @@ def get_birthday_reminders(group_name: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# birthday
 @app.get("/group/birthday/{username}")
 def get_birthday_suggestions(username: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
