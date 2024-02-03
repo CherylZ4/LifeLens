@@ -33,7 +33,7 @@ jobs:
     - run: |
         cd frontend
         mkdir /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Payload
-        cp -r /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Runner.app /Users/runner/work/lifelens/lifelens/build/ios/iphoneos/Payload/
+        cp -r /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Runner.app /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/Payload/
         cd /Users/runner/work/lifelens/lifelens/frontend/build/ios/iphoneos/
         zip -r Payload.zip Payload
         mv Payload.zip Lifelens.ipa
