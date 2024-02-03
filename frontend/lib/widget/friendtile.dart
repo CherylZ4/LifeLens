@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/friendprofile.dart';
 
 class FriendTile extends StatefulWidget {
   final String name;
@@ -16,10 +17,10 @@ class _FriendTileState extends State<FriendTile> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => const HomeScreen(groupname: "pog")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FriendProfile(name: widget.name)));
       },
       shape: RoundedRectangleBorder(
         borderRadius:
