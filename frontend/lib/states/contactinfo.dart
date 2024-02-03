@@ -13,13 +13,22 @@ class _ContactInfoPageState extends State<ContactInfoPage>
   late AnimationController animationController;
   late TextEditingController _phonecontroller;
   late TextEditingController _addresscontroller;
+  late TextEditingController _emailcontroller;
   String address = "";
   String phone = "";
+  String email = "";
+
+  RegExp addressregex = RegExp(r'^\d+\s+[\w\s]+\s+\w+$');
+  RegExp phoneregex =
+      RegExp(r'^(\+\d{1,3}\s?)?(\()?(\d{3})(\))?[-.\s]?(\d{3})[-.\s]?(\d{4})$');
+  RegExp emailregex =
+      RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
   @override
   void initState() {
     super.initState();
     _phonecontroller = TextEditingController();
     _addresscontroller = TextEditingController();
+    _emailcontroller = TextEditingController();
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(),
@@ -39,12 +48,14 @@ class _ContactInfoPageState extends State<ContactInfoPage>
     animationController.dispose();
     _phonecontroller.dispose();
     _addresscontroller.dispose();
+    _emailcontroller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(),
       body: SafeArea(
           child: Padding(
@@ -82,6 +93,8 @@ class _ContactInfoPageState extends State<ContactInfoPage>
               onChanged: (value) {
                 setState(() {
                   address = value;
+                  print(
+                      "address : " + addressregex.hasMatch(address).toString());
                 });
               },
             ),
@@ -95,7 +108,27 @@ class _ContactInfoPageState extends State<ContactInfoPage>
               ),
               controller: _phonecontroller,
               onChanged: (value) {
-                phone = value;
+                setState(() {
+                  phone = value;
+                });
+                print("phone : " + phoneregex.hasMatch(phone).toString());
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Email',
+              ),
+              controller: _emailcontroller,
+              onChanged: (value) {
+                setState(() {
+                  email = value;
+                });
+
+                print("email : " + emailregex.hasMatch(email).toString());
               },
             ),
             const Spacer(),
@@ -109,7 +142,9 @@ class _ContactInfoPageState extends State<ContactInfoPage>
                         ),
                       ),
                     ),
-                    onPressed: true
+                    onPressed: (addressregex.hasMatch(address) &&
+                            phoneregex.hasMatch(phone) &&
+                            emailregex.hasMatch(email))
                         ? () {
                             Navigator.push(
                                 context,
