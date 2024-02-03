@@ -40,10 +40,8 @@ async def root():
 
 # Users
 @app.get("/user/exist/{username}")
-async def does_user_exist(username: NewUser):
-    # Replace the URL with your actual Kintone API URL
+async def does_user_exist(username: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-    # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
 
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
 
@@ -55,7 +53,6 @@ async def does_user_exist(username: NewUser):
         if response.status_code == 200:
             # return response.json()
             original_data = response.json()
-            transformed_data = {}
 
             # Traverse each record and extract user information
             for record in original_data["records"]:
