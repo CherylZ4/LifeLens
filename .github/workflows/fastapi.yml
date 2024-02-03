@@ -50,6 +50,7 @@ jobs:
     - name: Ssh into AWS EC2 and update docker container
       run: |
         cd backend
+        sudo apt install dockerio
         ssh -i "key.pem" ubuntu@"$IP" sudo docker ps -a
         ssh -i "key.pem" ubuntu@"$IP" "sudo docker ps -a -q | xargs -I {} sudo docker stop {}"
         ssh -i "key.pem" ubuntu@"$IP" "sudo docker ps -a -q | xargs -I {} sudo docker rm {}"
