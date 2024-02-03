@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/homescreen.dart';
 import 'package:lifelens/states/namecreation.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 
@@ -56,14 +57,15 @@ class _InitializationScreenState extends State<InitializationScreen> {
 
                         setState(() {
                           _credentials = credentials;
-                        });}
+                        });
+                        checkAndNavigate();
+                        print("pog worked");
+                        }
+                      
                         catch (e){
                           print("failed");
                         }
                           
-                        }
-                        else{
-                          print("already logged in");
                         }
                         
                       },
@@ -75,34 +77,20 @@ class _InitializationScreenState extends State<InitializationScreen> {
                 ),
               ],
             ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // Row(
-            //   children: <Widget>[
-            //     Expanded(
-            //       child: FilledButton.tonal(
-            //           style: ButtonStyle(
-            //             shape: MaterialStateProperty.all<OutlinedBorder>(
-            //               RoundedRectangleBorder(
-            //                 borderRadius: BorderRadius.circular(8.0),
-            //               ),
-            //             ),
-            //           ),
-            //           onPressed: () {
-            //             print("CLICKED");
-            //           },
-            //           child: const Padding(
-            //             padding: EdgeInsets.symmetric(vertical: 15),
-            //             child: Text('Already have an account',
-            //                 style: TextStyle(fontSize: 17)),
-            //           )),
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       )),
     );
   }
+  void checkAndNavigate() {
+  if (_credentials != null) {
+    // Navigate to HomeScreen when _credentials is not null
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(groupname: "haha"),
+      ),
+    );
+  }
+}
 }
