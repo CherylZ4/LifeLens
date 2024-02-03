@@ -18,6 +18,12 @@ class NewUser(BaseModel):
     username: str
 
 
+class NewGroup(BaseModel):
+    groupname: str
+    description: str
+    members: str
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -201,3 +207,38 @@ async def get_group_by_name(groupname: str):
     except Exception as e:
         # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/group/add/")  # this is failed
+async def add_user(record: NewGroup):
+    # Define the URL to add a new record in the Kintone database
+    url = "https://lifelens.kintone.com/k/v1/record.json"
+
+    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+
+    # Prepare the data for the new record
+    data = {
+        "app": 4,
+        "record": {
+            "groupname": {"value": record.groupname},
+            "description": {"value": record.description},
+            "members": {"value": record.members},
+        },
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3",
+    }
+
+    try:
+        # Make the API call to Kintone to add the new record
+        response = requests.post(url, json=data, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            return {"message": "Record added successfully"}
+        else:
+            return {"error": "Failed to add record"}
+    except Exception as e:
+        return {"error": str(e)}
