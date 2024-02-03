@@ -20,6 +20,7 @@ class NewUser(BaseModel):
     food_restrictions: list[str]
     interests: str
     username: str
+    phone_number: str
 
 
 class NewGroup(BaseModel):
@@ -73,6 +74,7 @@ async def add_user(record: NewUser):
             "address": {"value": record.address},
             "food_restrictions": {"value": record.food_restrictions},
             "interests": {"value": record.interests},
+            "phone_number": {"value": record.phone_number},
             "username": {"value": record.username},
         },
     }
@@ -113,6 +115,7 @@ async def get_all_users():
                         for restriction in record["food_restrictions"]["value"]
                     ],
                     "interests": record["interests"]["value"],
+                    "phone_number": record["phone_number"]["value"],
                 }
                 transformed_data[username] = user_info
             return transformed_data
@@ -147,6 +150,7 @@ async def get_user_by_username(username: str):
                             for restriction in record["food_restrictions"]["value"]
                         ],
                         "interests": record["interests"]["value"],
+                        "phone_number": record["phone_number"]["value"],
                     }
                     return user_info
             return {}
