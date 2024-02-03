@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/homescreen.dart';
 
 class FriendGroup extends StatefulWidget {
   final String groupname;
@@ -16,7 +17,10 @@ class _FriendGroupState extends State<FriendGroup> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        print("CLICKED");
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeScreen(groupname: widget.groupname)));
       },
       shape: RoundedRectangleBorder(
         side: BorderSide(
