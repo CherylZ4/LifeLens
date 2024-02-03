@@ -29,7 +29,7 @@ class _NameCreationState extends State<NameCreation> {
       appBar: AppBar(),
       body: SafeArea(
           child: Padding(
-        padding: EdgeInsets.fromLTRB(60, 30, 60, 30),
+        padding: const EdgeInsets.fromLTRB(60, 30, 60, 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
