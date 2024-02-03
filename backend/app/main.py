@@ -23,7 +23,8 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post("/user/add/")
+# Users
+@app.post("/user/add/")  # this is failed
 async def add_user(record: NewUser):
     # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
@@ -113,7 +114,7 @@ async def get_all_users():
 
 
 @app.get("/user/{username}")
-async def get_user_by_id(username: str):
+async def get_user_by_username(username: str):
     # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
     # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
@@ -128,7 +129,6 @@ async def get_user_by_id(username: str):
         if response.status_code == 200:
             # return response.json()
             original_data = response.json()
-            transformed_data = {}
 
             # Traverse each record and extract user information
             for record in original_data["records"]:
@@ -149,6 +149,47 @@ async def get_user_by_id(username: str):
 
                     # Add user information to the dictionary with username as key
                     return user_info
+            return {}
+
+        else:
+            # Raise an HTTPException if the request was unsuccessful
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        # Handle any exceptions that occur during the API call
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Groups
+@app.get("/group/{groupname}")
+async def get_group_by_name(groupname: str):
+    # Replace the URL with your actual Kintone API URL
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
+
+    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+
+    try:
+        # Make the API call to Kintone
+        response = requests.get(kintone_url, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # return response.json()
+            original_data = response.json()
+
+            # Traverse each record and extract user information
+            for record in original_data["records"]:
+                _groupname = record["groupname"]["value"]
+                if _groupname == groupname:
+                    group_info = {
+                        "group_description": record["group_description"]["value"],
+                        "members": record["members"]["value"].split(),
+                    }
+
+                    # Add user information to the dictionary with username as key
+                    return group_info
             return {}
 
         else:
