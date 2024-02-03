@@ -2,12 +2,12 @@ from ast import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+import logging
 
 app = FastAPI()
 
 
 class NewUser(BaseModel):
-    # Define the fields of the new record
     first_name: str
     last_name: str
     email: str
@@ -24,13 +24,18 @@ class NewGroup(BaseModel):
     members: str
 
 
+class AddMember(BaseModel):
+    new_username: str
+    groupname: str
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
 # Users
-@app.post("/user/add/")  # this is failed
+@app.post("/user/add/")
 async def add_user(record: NewUser):
     # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
@@ -38,23 +43,21 @@ async def add_user(record: NewUser):
     # Prepare the data for the new record
     data = {
         "app": 3,
-        "record": [
-            {
-                "first_name": {"value": record.first_name},
-                "last_name": {"value": record.last_name},
-                "email": {"value": record.email},
-                "birthday": {"value": record.birthday},
-                "address": {"value": record.address},
-                "food_restrictions": {"value": record.food_restrictions},
-                "interests": {"value": record.interests},
-                "username": {"value": record.username},
-            }
-        ],
+        "record": {
+            "first_name": {"value": record.first_name},
+            "last_name": {"value": record.last_name},
+            "email": {"value": record.email},
+            "birthday": {"value": record.birthday},
+            "address": {"value": record.address},
+            "food_restrictions": {"value": record.food_restrictions},
+            "interests": {"value": record.interests},
+            "username": {"value": record.username},
+        },
     }
 
     headers = {
         "Content-Type": "application/json",
-        "X-Cybozu-API-Token": "your_api_token_here",
+        "X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc",
     }
 
     try:
@@ -65,7 +68,7 @@ async def add_user(record: NewUser):
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"error": "Failed to add record"}
+            return {"error": response.status_code}
     except Exception as e:
         return {"error": str(e)}
 
@@ -123,7 +126,6 @@ async def get_all_users():
 async def get_user_by_username(username: str):
     # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-    # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
 
     headers = {"X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc"}
 
@@ -209,12 +211,10 @@ async def get_group_by_name(groupname: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/group/add/")  # this is failed
-async def add_user(record: NewGroup):
+@app.post("/group/new/")
+def add_user(record: NewGroup):
     # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
-
-    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
 
     # Prepare the data for the new record
     data = {
@@ -233,12 +233,77 @@ async def add_user(record: NewGroup):
 
     try:
         # Make the API call to Kintone to add the new record
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(
+            url,
+            json=data,
+            headers=headers,
+        )
 
         # Check if the request was successful
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"error": "Failed to add record"}
+            return {"error": response.status_code}
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.put("/group/add/")
+def add_user(record: AddMember):
+    # Replace the URL with your actual Kintone API URL
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
+
+    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+
+    id = -1
+    members = ""
+
+    try:
+        # Make the API call to Kintone
+        response = requests.get(kintone_url, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # return response.json()
+            original_data = response.json()
+
+            # Traverse each record and extract user information
+            for _record in original_data["records"]:
+                _groupname = _record["groupname"]["value"]
+                if _groupname == record.groupname:
+                    id = _record["$id"]["value"]
+                    members = _record["members"]["value"]
+            if id == -1:
+                raise HTTPException(status_code=201, detail="group now found")
+            # check duplicates
+            member_list = members.split()
+            flag = False
+            for member in member_list:
+                if member == record.new_username:
+                    flag = True
+            if not (flag):
+                members += " " + record.new_username
+            data = {
+                "app": 4,
+                "id": id,
+                "record": {"members": {"value": members}},
+            }
+            kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
+            response = requests.put(kintone_url_2, json=data, headers=headers)
+            if response.status_code == 200:
+                return {"members": members.split()}
+            else:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail="Failed to modify data from Kintone API",
+                )
+
+        else:
+            # Raise an HTTPException if the request was unsuccessful
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        # Handle any exceptions that occur during the API call
+        raise HTTPException(status_code=500, detail=str(e))
