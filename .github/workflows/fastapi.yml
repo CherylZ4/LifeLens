@@ -54,6 +54,6 @@ jobs:
         ssh -i "key.pem" ubuntu@"$IP" "sudo docker ps -a -q | xargs -I {} sudo docker stop {}"
         ssh -i "key.pem" ubuntu@"$IP" "sudo docker ps -a -q | xargs -I {} sudo docker rm {}"
         ssh -i "key.pem" ubuntu@"$IP" sudo docker pull conradmo/lifelens
-        ssh -i "key.pem" ubuntu@"$IP" sudo docker run -d -p 3000:3000 conradmo/lifelens
+        ssh -i "key.pem" ubuntu@"$IP" sudo docker run -d -p 8000:8000 conradmo/lifelens
       env:
         IP: ${{secrets.EC2_IP}}
