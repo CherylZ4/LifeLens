@@ -6,9 +6,61 @@ import requests
 app = FastAPI()
 
 
+class NewUser(BaseModel):
+    # Define the fields of the new record
+    first_name: str
+    last_name: str
+    email: str
+    birthday: str
+    address: str
+    food_restrictions: list[str]
+    interests: str
+    username: str
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+@app.post("/user/add/")
+async def add_user(record: NewUser):
+    # Define the URL to add a new record in the Kintone database
+    url = "https://lifelens.kintone.com/k/v1/record.json"
+
+    # Prepare the data for the new record
+    data = {
+        "app": 3,
+        "record": [
+            {
+                "first_name": {"value": record.first_name},
+                "last_name": {"value": record.last_name},
+                "email": {"value": record.email},
+                "birthday": {"value": record.birthday},
+                "address": {"value": record.address},
+                "food_restrictions": {"value": record.food_restrictions},
+                "interests": {"value": record.interests},
+                "username": {"value": record.username},
+            }
+        ],
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Cybozu-API-Token": "your_api_token_here",
+    }
+
+    try:
+        # Make the API call to Kintone to add the new record
+        response = requests.post(url, json=data, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            return {"message": "Record added successfully"}
+        else:
+            return {"error": "Failed to add record"}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/users/")
