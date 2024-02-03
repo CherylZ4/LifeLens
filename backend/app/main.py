@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 from openai import OpenAI
-import logging
 import apikeys
 
 client = OpenAI(api_key=apikeys.OPENAI_API)
@@ -60,7 +59,7 @@ async def add_user(record: NewUser):
 
     headers = {
         "Content-Type": "application/json",
-        "X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc",
+        "X-Cybozu-API-Token": apikeys.KINTONE_USER,
     }
 
     try:
@@ -82,7 +81,7 @@ async def get_all_users():
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
     # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
 
-    headers = {"X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc"}
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
 
     try:
         # Make the API call to Kintone
@@ -130,7 +129,7 @@ async def get_user_by_username(username: str):
     # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
 
-    headers = {"X-Cybozu-API-Token": "UAAcDTKtR1wmtqtNZELqbKZpsFDwcRynN5CkvPmc"}
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
 
     try:
         # Make the API call to Kintone
@@ -179,7 +178,7 @@ async def get_group_by_name(groupname: str):
     # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
 
-    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
 
     try:
         # Make the API call to Kintone
@@ -231,7 +230,7 @@ def add_user(record: NewGroup):
 
     headers = {
         "Content-Type": "application/json",
-        "X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3",
+        "X-Cybozu-API-Token": apikeys.KINTONE_GROUP,
     }
 
     try:
@@ -256,7 +255,7 @@ def add_user(record: AddMember):
     # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
 
-    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
 
     id = -1
     members = ""
@@ -316,7 +315,7 @@ def add_user(record: AddMember):
 @app.get("/group/birthday/{group_name}")
 def get_birthday_reminders(group_name: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
-    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
 
     try:
         response = requests.get(kintone_url, headers=headers)
