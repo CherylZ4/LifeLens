@@ -18,7 +18,7 @@ class _PronounScreenState extends State<PronounScreen> {
             mainAxisAlignment: MainAxisAlignment.start, 
             children: <Widget> [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start, 
+              mainAxisAlignment: MainAxisAlignment.center, 
               children: <Widget> [
                 const Text(
                     "Pronouns",
@@ -27,7 +27,7 @@ class _PronounScreenState extends State<PronounScreen> {
               ],),
             SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
-              FilledButton.tonal(
+              OutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all<OutlinedBorder>(
                             RoundedRectangleBorder(
