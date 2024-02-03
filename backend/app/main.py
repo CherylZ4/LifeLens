@@ -39,6 +39,42 @@ async def root():
 
 
 # Users
+@app.get("/user/exist/{username}")
+async def does_user_exist(username: NewUser):
+    # Replace the URL with your actual Kintone API URL
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
+    # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
+
+    headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
+
+    try:
+        # Make the API call to Kintone
+        response = requests.get(kintone_url, headers=headers)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # return response.json()
+            original_data = response.json()
+            transformed_data = {}
+
+            # Traverse each record and extract user information
+            for record in original_data["records"]:
+                # return record
+                if record["username"]["value"] == username:
+                    return True
+            return False
+
+        else:
+            # Raise an HTTPException if the request was unsuccessful
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        # Handle any exceptions that occur during the API call
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/user/add/")
 async def add_user(record: NewUser):
     # Define the URL to add a new record in the Kintone database
@@ -67,7 +103,6 @@ async def add_user(record: NewUser):
     try:
         # Make the API call to Kintone to add the new record
         response = requests.post(url, json=data, headers=headers)
-
         # Check if the request was successful
         if response.status_code == 200:
             return {"message": "Record added successfully"}
