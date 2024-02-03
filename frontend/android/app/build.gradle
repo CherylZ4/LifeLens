@@ -49,8 +49,9 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        manifestPlaceholders = [
-            'appAuthRedirectScheme': 'lifelens.app'
+        manifestPlaceholders += [
+            auth0Domain: "dev-jgv85hakgz2rswn1.us.auth0.com",
+            auth0Scheme: "https"
         ]
     }
 
