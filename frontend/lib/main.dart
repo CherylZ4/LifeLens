@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'color_schemes.g.dart';
 import 'package:lifelens/states/homescreen.dart';
 import 'package:lifelens/states/pronounscreen.dart';
+import 'package:lifelens/states/test.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       // ),
       home: const PronounScreen(
       ),
+      // home: MyWidget(),
     );
   }
 }

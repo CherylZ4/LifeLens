@@ -8,6 +8,7 @@ class PronounScreen extends StatefulWidget {
 }
 
 class _PronounScreenState extends State<PronounScreen> {
+  bool showWidget = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,20 +27,99 @@ class _PronounScreenState extends State<PronounScreen> {
                   ),
               ],),
             SizedBox(height: 10),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
-              OutlinedButton(
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all<OutlinedBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
+                Expanded(child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                             ),
                           ),
-                        ),
-                        onPressed: () {
-                          print("CLICKED");
-                        },
-                        child: const Text('+ Add Friend')),
-            ],)
+                          onPressed: () {
+                            print("CLICKED");
+                          },
+                          child: const Text('she/her')),
+                )
+              ],
+            ),
+          SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
+                Expanded(child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            print("CLICKED");
+                          },
+                          child: const Text('he/him')),
+                )
+              ],
+            ),
+          SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
+                Expanded(child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            print("CLICKED");
+                          },
+                          child: const Text('they/them')),
+                )
+              ],
+            ),
+          SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
+                Expanded(child: OutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              showWidget = !showWidget;
+                            });
+                          },
+                          child: const Text('other')),
+                )
+              ],
+            ),
+          showWidget
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {},
+                    child: 
+                      Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget> [
+
+                          OutlinedButton(
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<OutlinedBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {},
+                                child: const Text('fgrnjkens')),
+                      ])
+                  ),
+                ],
+              )
+            : Container(),
         ],)
       )
     ));
