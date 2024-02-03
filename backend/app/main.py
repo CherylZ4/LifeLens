@@ -24,11 +24,14 @@ async def get_users():
 
         # Check if the request was successful
         if response.status_code == 200:
+            # return response.json()
             original_data = response.json()
             transformed_data = {
                 "id": original_data["record"]["$id"]["value"],
+                "username": original_data["record"]["username"]["value"],
                 "first_name": original_data["record"]["first_name"]["value"],
                 "last_name": original_data["record"]["last_name"]["value"],
+                "address": original_data["record"]["address"]["value"],
                 "birthday": original_data["record"]["birthday"]["value"],
                 "food_restrictions": [
                     restriction.capitalize()
