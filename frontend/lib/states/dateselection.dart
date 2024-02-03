@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/contactinfo.dart';
 
 class DateSelectionScreen extends StatefulWidget {
   const DateSelectionScreen({super.key, this.restorationId});
@@ -134,6 +134,7 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                 });
               },
               decoration: InputDecoration(
+                helperText: "DD/MM/YYYY",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () {
@@ -160,8 +161,8 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const HomeScreen(
-                                        groupname: "TEST NO API")));
+                                    builder: (context) =>
+                                        const ContactInfoPage()));
                           }
                         : null,
                     child: Text("Next")))

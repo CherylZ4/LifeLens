@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lifelens/states/namecreation.dart';
 
 class InitializationScreen extends StatefulWidget {
@@ -19,6 +20,12 @@ class _InitializationScreenState extends State<InitializationScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            SvgPicture.asset(
+              'assets/logo.svg',
+              semanticsLabel: 'My SVG Image',
+              height: 400,
+              width: 300,
+            ),
             const Text(
               "LifeLens",
               style: TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
@@ -55,31 +62,31 @@ class _InitializationScreenState extends State<InitializationScreen> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: FilledButton.tonal(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        print("CLICKED");
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child: Text('Already have an account',
-                            style: TextStyle(fontSize: 17)),
-                      )),
-                ),
-              ],
-            ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child: FilledButton.tonal(
+            //           style: ButtonStyle(
+            //             shape: MaterialStateProperty.all<OutlinedBorder>(
+            //               RoundedRectangleBorder(
+            //                 borderRadius: BorderRadius.circular(8.0),
+            //               ),
+            //             ),
+            //           ),
+            //           onPressed: () {
+            //             print("CLICKED");
+            //           },
+            //           child: const Padding(
+            //             padding: EdgeInsets.symmetric(vertical: 15),
+            //             child: Text('Already have an account',
+            //                 style: TextStyle(fontSize: 17)),
+            //           )),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       )),
