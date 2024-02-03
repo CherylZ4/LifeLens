@@ -93,8 +93,6 @@ class _ContactInfoPageState extends State<ContactInfoPage>
               onChanged: (value) {
                 setState(() {
                   address = value;
-                  print(
-                      "address : " + addressregex.hasMatch(address).toString());
                 });
               },
             ),
@@ -111,7 +109,6 @@ class _ContactInfoPageState extends State<ContactInfoPage>
                 setState(() {
                   phone = value;
                 });
-                print("phone : " + phoneregex.hasMatch(phone).toString());
               },
             ),
             const SizedBox(
@@ -127,8 +124,6 @@ class _ContactInfoPageState extends State<ContactInfoPage>
                 setState(() {
                   email = value;
                 });
-
-                print("email : " + emailregex.hasMatch(email).toString());
               },
             ),
             const Spacer(),
