@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/widget/friendgroup.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,14 +18,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: Drawer(
         child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 30, 10, 30),
             child: ListView(
-          children: const <Widget>[
-            Text(
-              "Friend Groups",
-              textAlign: TextAlign.center,
+              children: const <Widget>[
+                Text('Friend Groups',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 25)),
+                FriendGroup(
+                  groupname: "Ark & Co",
+                  description: "A group full of crazy ppl",
+                )
+              ],
             ),
-          ],
-        )),
+          ),
+        ),
       ),
     );
   }
