@@ -1,4 +1,5 @@
 from ast import List
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
@@ -317,20 +318,81 @@ def get_birthday_reminders(group_name: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
 
+    # return datetime.now()
+
     try:
         response = requests.get(kintone_url, headers=headers)
         if response.status_code == 200:
             original_data = response.json()
+            group_info = {}
             for record in original_data["records"]:
                 _groupname = record["groupname"]["value"]
                 if _groupname == group_name:
                     group_info = {
                         "members": record["members"]["value"].split(),
                     }
+            if group_info == {}:
+                raise HTTPException(status_code=204, detail="Group not found")
 
-                    # Add user information to the dictionary with username as key
-                    return group_info
-            return {}
+            kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
+            headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
+
+            try:
+                # Make the API call to Kintone
+                response = requests.get(kintone_url, headers=headers)
+
+                # Check if the request was successful
+                if response.status_code == 200:
+                    # return response.json()
+                    original_data = response.json()
+                    transformed_data = {}
+
+                    # Traverse each record and extract user information
+                    for record in original_data["records"]:
+                        if record["username"]["value"] in group_info["members"]:
+                            # Calculate days until next birthday
+                            birthday_str = record["birthday"]["value"]
+                            birthday_date = datetime.strptime(birthday_str, "%Y-%m-%d")
+                            today = datetime.now()
+                            next_birthday = datetime(
+                                today.year, birthday_date.month, birthday_date.day
+                            )
+                            if next_birthday < today:
+                                next_birthday = datetime(
+                                    today.year + 1,
+                                    birthday_date.month,
+                                    birthday_date.day,
+                                )
+                            days_until_birthday = (next_birthday - today).days
+
+                            # Add user information to the dictionary with username as key
+                            transformed_data[record["username"]["value"]] = {
+                                "birthday": birthday_str,
+                                "days_until_birthday": days_until_birthday,
+                            }
+                    return transformed_data
+
+                else:
+                    # Raise an HTTPException if the request was unsuccessful
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail="Failed to fetch data from Kintone API",
+                    )
+            except Exception as e:
+                # Handle any exceptions that occur during the API call
+                raise HTTPException(status_code=500, detail=str(e))
+
+            completion = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": group_info["members"]
+                        + ", try to count how many names are there",
+                    },
+                ],
+            )
+            return completion.choices[0].message
 
         else:
             # Raise an HTTPException if the request was unsuccessful
@@ -341,11 +403,3 @@ def get_birthday_reminders(group_name: str):
     except Exception as e:
         # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
-
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": group_name + ", try to interpret this name"},
-        ],
-    )
-    return completion.choices[0].message
