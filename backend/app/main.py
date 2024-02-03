@@ -4,8 +4,9 @@ from pydantic import BaseModel
 import requests
 from openai import OpenAI
 import logging
+import apikeys
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=apikeys.OPENAI_API)
 app = FastAPI()
 
 
@@ -314,6 +315,34 @@ def add_user(record: AddMember):
 # birthday
 @app.get("/group/birthday/{group_name}")
 def get_birthday_reminders(group_name: str):
+    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
+    headers = {"X-Cybozu-API-Token": "zkZ46bntwVUu4IBfmbxwx8AXNinPoEXyQdaYHwI3"}
+
+    try:
+        response = requests.get(kintone_url, headers=headers)
+        if response.status_code == 200:
+            original_data = response.json()
+            for record in original_data["records"]:
+                _groupname = record["groupname"]["value"]
+                if _groupname == group_name:
+                    group_info = {
+                        "members": record["members"]["value"].split(),
+                    }
+
+                    # Add user information to the dictionary with username as key
+                    return group_info
+            return {}
+
+        else:
+            # Raise an HTTPException if the request was unsuccessful
+            raise HTTPException(
+                status_code=response.status_code,
+                detail="Failed to fetch data from Kintone API",
+            )
+    except Exception as e:
+        # Handle any exceptions that occur during the API call
+        raise HTTPException(status_code=500, detail=str(e))
+
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
