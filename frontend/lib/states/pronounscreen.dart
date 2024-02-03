@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 
 class PronounScreen extends StatefulWidget {
@@ -31,6 +29,7 @@ class _PronounScreenState extends State<PronounScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
@@ -147,7 +146,7 @@ class _PronounScreenState extends State<PronounScreen> {
               isOther
                   ? TextField(
                       controller: _controller,
-                      onSubmitted: (String value) async {
+                      onChanged: (value) {
                         setState(() {
                           pronoun = value;
                           print(pronoun);
@@ -155,7 +154,7 @@ class _PronounScreenState extends State<PronounScreen> {
                       },
                     )
                   : Container(),
-              Spacer(),
+              const Spacer(),
               SizedBox(
                   width: double.maxFinite,
                   child: FilledButton(
