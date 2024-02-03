@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'color_schemes.g.dart';
 import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/pronounscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'LifeLens',
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: const HomeScreen(
-        groupname: "Home",
+      // home: const HomeScreen(
+      //   groupname: "Home",
+      // ),
+      home: const PronounScreen(
       ),
     );
   }
