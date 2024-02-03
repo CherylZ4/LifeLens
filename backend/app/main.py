@@ -42,42 +42,27 @@ async def root():
 @app.get("/user/exist/{username}")
 async def does_user_exist(username: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
-
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
-
-            # Traverse each record and extract user information
             for record in original_data["records"]:
-                # return record
                 if record["username"]["value"] == username:
                     return True
             return False
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/user/add/")
 async def add_user(record: NewUser):
-    # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
-
-    # Prepare the data for the new record
     data = {
         "app": 3,
         "record": {
@@ -96,11 +81,8 @@ async def add_user(record: NewUser):
         "Content-Type": "application/json",
         "X-Cybozu-API-Token": apikeys.KINTONE_USER,
     }
-
     try:
-        # Make the API call to Kintone to add the new record
         response = requests.post(url, json=data, headers=headers)
-        # Check if the request was successful
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
@@ -111,23 +93,13 @@ async def add_user(record: NewUser):
 
 @app.get("/users/")
 async def get_all_users():
-    # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-    # kintone_url = "https://lifelens.kintone.com/k/v1/record.json?app=3&id=2"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
-
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
             transformed_data = {}
-
-            # Traverse each record and extract user information
             for record in original_data["records"]:
                 username = record["username"]["value"]
                 user_info = {
@@ -142,39 +114,25 @@ async def get_all_users():
                     ],
                     "interests": record["interests"]["value"],
                 }
-
-                # Add user information to the dictionary with username as key
                 transformed_data[username] = user_info
             return transformed_data
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/user/{username}")
 async def get_user_by_username(username: str):
-    # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
-
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
-
-            # Traverse each record and extract user information
             for record in original_data["records"]:
                 _username = record["username"]["value"]
                 if _username == username:
@@ -190,40 +148,26 @@ async def get_user_by_username(username: str):
                         ],
                         "interests": record["interests"]["value"],
                     }
-
-                    # Add user information to the dictionary with username as key
                     return user_info
             return {}
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # Groups
 @app.get("/group/{groupname}")
 async def get_group_by_name(groupname: str):
-    # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
-
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
-
-            # Traverse each record and extract user information
             for record in original_data["records"]:
                 _groupname = record["groupname"]["value"]
                 if _groupname == groupname:
@@ -231,28 +175,20 @@ async def get_group_by_name(groupname: str):
                         "group_description": record["group_description"]["value"],
                         "members": record["members"]["value"].split(),
                     }
-
-                    # Add user information to the dictionary with username as key
                     return group_info
             return {}
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/group/new/")
 def add_user(record: NewGroup):
-    # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
-
-    # Prepare the data for the new record
     data = {
         "app": 4,
         "record": {
@@ -261,21 +197,16 @@ def add_user(record: NewGroup):
             "members": {"value": record.members},
         },
     }
-
     headers = {
         "Content-Type": "application/json",
         "X-Cybozu-API-Token": apikeys.KINTONE_GROUP,
     }
-
     try:
-        # Make the API call to Kintone to add the new record
         response = requests.post(
             url,
             json=data,
             headers=headers,
         )
-
-        # Check if the request was successful
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
@@ -286,24 +217,16 @@ def add_user(record: NewGroup):
 
 @app.put("/group/add/")
 def add_user(record: AddMember):
-    # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_GROUP}
 
     id = -1
     members = ""
 
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
-
-            # Traverse each record and extract user information
             for _record in original_data["records"]:
                 _groupname = _record["groupname"]["value"]
                 if _groupname == record.groupname:
@@ -333,15 +256,12 @@ def add_user(record: AddMember):
                     status_code=response.status_code,
                     detail="Failed to modify data from Kintone API",
                 )
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -366,21 +286,13 @@ def get_birthday_reminders(group_name: str):
                     }
             if group_info == {}:
                 raise HTTPException(status_code=204, detail="Group not found")
-
             kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
             headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
-
             try:
-                # Make the API call to Kintone
                 response = requests.get(kintone_url, headers=headers)
-
-                # Check if the request was successful
                 if response.status_code == 200:
-                    # return response.json()
                     original_data = response.json()
                     transformed_data = {}
-
-                    # Traverse each record and extract user information
                     for record in original_data["records"]:
                         if record["username"]["value"] in group_info["members"]:
                             # Calculate days until next birthday
@@ -397,55 +309,38 @@ def get_birthday_reminders(group_name: str):
                                     birthday_date.day,
                                 )
                             days_until_birthday = (next_birthday - today).days
-
-                            # Add user information to the dictionary with username as key
                             transformed_data[record["username"]["value"]] = {
                                 "birthday": birthday_str,
                                 "days_until_birthday": days_until_birthday,
                             }
                     return transformed_data
-
                 else:
-                    # Raise an HTTPException if the request was unsuccessful
                     raise HTTPException(
                         status_code=response.status_code,
                         detail="Failed to fetch data from Kintone API",
                     )
             except Exception as e:
-                # Handle any exceptions that occur during the API call
                 raise HTTPException(status_code=500, detail=str(e))
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # birthday
 @app.get("/group/birthday/{username}")
 def get_birthday_suggestions(username: str):
-    # Replace the URL with your actual Kintone API URL
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-
     headers = {"X-Cybozu-API-Token": apikeys.KINTONE_USER}
 
     try:
-        # Make the API call to Kintone
         response = requests.get(kintone_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
-            # return response.json()
             original_data = response.json()
-
-            # Traverse each record and extract user information
             for record in original_data["records"]:
-                # return record
                 if record["username"]["value"] == username:
                     user_interest = record["interests"]["value"]
                     completion = client.chat.completions.create(
@@ -460,17 +355,12 @@ def get_birthday_suggestions(username: str):
                         ],
                     )
                     text_generated = completion.choices[0].message
-                    # return text_generated["content"]
                     return {"items": text_generated.content.split("\n")}
-
             raise HTTPException(status_code=205, detail="user not found")
-
         else:
-            # Raise an HTTPException if the request was unsuccessful
             raise HTTPException(
                 status_code=response.status_code,
                 detail="Failed to fetch data from Kintone API",
             )
     except Exception as e:
-        # Handle any exceptions that occur during the API call
         raise HTTPException(status_code=500, detail=str(e))
