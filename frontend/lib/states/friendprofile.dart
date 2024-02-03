@@ -15,9 +15,10 @@ class _FriendProfileState extends State<FriendProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
           child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 30),
         child: Column(
           children: <Widget>[
             ListTile(
