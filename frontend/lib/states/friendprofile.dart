@@ -23,6 +23,8 @@ class _FriendProfileState extends State<FriendProfile> {
           children: <Widget>[
             ListTile(
               leading: CircleAvatar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 child: Text(widget.name.substring(0, 1).toUpperCase()),
               ),
               title: Text(
@@ -94,7 +96,8 @@ class _FriendProfileState extends State<FriendProfile> {
               leading: Icon(Icons.food_bank),
               title: Text('Food Restriction?'),
               subtitle: Text("None"),
-              trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              trailing:
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
             ),
           ],
         ),

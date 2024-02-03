@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/initialization.dart';
 import 'color_schemes.g.dart';
-import 'package:lifelens/states/homescreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,12 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'LifeLens',
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: const HomeScreen(
-        groupname: "Home",
-      ),
-    );
+        title: 'LifeLens',
+        theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+        home: const InitializationScreen());
   }
 }

@@ -31,6 +31,7 @@ class _FriendGroupState extends State<FriendGroup> {
       ),
       leading: CircleAvatar(
         child: Text(widget.groupname.substring(0, 1).toUpperCase()),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
       title: Text(widget.groupname),
       subtitle: Text(widget.description),

@@ -28,6 +28,7 @@ class _FriendTileState extends State<FriendTile> {
       ),
       leading: CircleAvatar(
         child: Text(widget.name.substring(0, 1).toUpperCase()),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
       title: Text(widget.name),
     );
