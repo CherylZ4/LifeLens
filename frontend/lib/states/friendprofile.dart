@@ -23,6 +23,8 @@ class _FriendProfileState extends State<FriendProfile> {
           children: <Widget>[
             ListTile(
               leading: CircleAvatar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 child: Text(widget.name.substring(0, 1).toUpperCase()),
               ),
               title: Text(

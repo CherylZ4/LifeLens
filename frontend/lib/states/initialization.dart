@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/homescreen.dart';
 
 class InitializationScreen extends StatefulWidget {
   const InitializationScreen({super.key});
@@ -41,7 +42,12 @@ class _InitializationScreenState extends State<InitializationScreen> {
                         ),
                       ),
                       onPressed: () {
-                        print("CLICKED");
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen(
+                                      groupname: "test name (no api call)",
+                                    )));
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
