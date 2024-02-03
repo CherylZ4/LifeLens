@@ -2,6 +2,7 @@ from ast import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+import logging
 
 app = FastAPI()
 
@@ -210,7 +211,7 @@ async def get_group_by_name(groupname: str):
 
 
 @app.post("/group/add/")  # this is failed
-async def add_user(record: NewGroup):
+def add_user(record: NewGroup):
     # Define the URL to add a new record in the Kintone database
     url = "https://lifelens.kintone.com/k/v1/record.json"
 
@@ -233,7 +234,11 @@ async def add_user(record: NewGroup):
 
     try:
         # Make the API call to Kintone to add the new record
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(
+            url,
+            json=data,
+            headers=headers,
+        )
 
         # Check if the request was successful
         if response.status_code == 200:
