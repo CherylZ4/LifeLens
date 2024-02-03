@@ -18,7 +18,7 @@ class _FriendProfileState extends State<FriendProfile> {
       appBar: AppBar(),
       body: SafeArea(
           child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 30),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
         child: Column(
           children: <Widget>[
             ListTile(
@@ -89,7 +89,13 @@ class _FriendProfileState extends State<FriendProfile> {
                   ),
                 ],
               ),
-            )
+            ),
+            ListTile(
+              leading: Icon(Icons.food_bank),
+              title: Text('Food Restriction?'),
+              subtitle: Text("None"),
+              trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+            ),
           ],
         ),
       )),
