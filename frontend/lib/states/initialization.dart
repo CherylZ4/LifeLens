@@ -23,8 +23,8 @@ class _InitializationScreenState extends State<InitializationScreen> {
             SvgPicture.asset(
               'assets/logo.svg',
               semanticsLabel: 'My SVG Image',
-              height: 400,
-              width: 300,
+              height: 300,
+              width: 200,
             ),
             const Text(
               "LifeLens",
@@ -32,7 +32,7 @@ class _InitializationScreenState extends State<InitializationScreen> {
             ),
             const Text(
               "Life connecting insights",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 27),
             ),
             const SizedBox(
               height: 60,
