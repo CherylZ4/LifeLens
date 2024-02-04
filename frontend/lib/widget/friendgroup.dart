@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/utils/birthdaysoon.dart';
 import 'package:lifelens/utils/lifelensapi.dart';
 
 class FriendGroup extends StatefulWidget {
   final String? username;
   final String groupname;
   final String description;
+  final List grouplist;
 
   const FriendGroup(
       {super.key,
+      required this.grouplist,
       required this.groupname,
       required this.username,
       required this.description});
@@ -18,29 +21,53 @@ class FriendGroup extends StatefulWidget {
 }
 
 class _FriendGroupState extends State<FriendGroup> {
-  List<String> grouplist = [];
-  Map userinfo = {};
+  List friends = [];
+  List birthdays = [];
+  bool isLoading = true;
   @override
   void initState() {
-    Map usergroupinfo = groupUserList(widget.username) as Map;
-    setState(() {
-      userinfo = getUser(widget.username) as Map;
-      grouplist = usergroupinfo["groups"];
-    });
+    handleFriendGroupState();
     super.initState();
   }
 
   @override
+  void didUpdateWidget(FriendGroup oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    handleFriendGroupState();
+  }
+
+  void handleFriendGroupState() async {
+    if (mounted) {
+      setState(() {
+        isLoading = true; // Set loading state to true
+      });
+      Map friendsmap = await getGroupInfo(widget.groupname);
+      birthdays = birthdaysSoon(widget.groupname);
+
+      setState(() {
+        friends = friendsmap["members"];
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      // Return a loading indicator or an empty container
+      return Container();
+    }
     return ListTile(
       onTap: () {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => HomeScreen(
+                      birthdays: birthdays,
+                      friends: friends,
                       groupname: widget.groupname,
-                      userinfo: userinfo,
-                      groupList: grouplist,
+                      username: widget.username,
+                      groupListFull: widget.grouplist,
                     )));
       },
       shape: RoundedRectangleBorder(

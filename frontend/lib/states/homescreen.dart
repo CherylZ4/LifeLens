@@ -1,63 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/utils/birthdaysoon.dart';
 import 'package:lifelens/utils/lifelensapi.dart';
 import 'package:lifelens/widget/friendgroup.dart';
 import 'package:lifelens/widget/friendtile.dart';
 
 class HomeScreen extends StatefulWidget {
   final String groupname;
-  final List groupList;
-  final Map<dynamic, dynamic> userinfo;
+  final List friends;
+  final List birthdays;
+  final List groupListFull;
+  final String? username;
   const HomeScreen(
       {super.key,
       required this.groupname,
-      required this.groupList,
-      required this.userinfo});
+      required this.friends,
+      required this.birthdays,
+      required this.groupListFull,
+      required this.username});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List grouplistfull = [];
   String newgroup = "";
-  String newdescription = "";
-  bool isLoading = true;
-  late List<Widget> friendWidgets = [];
-  late List<Widget> birthdayWidgets = [];
-  List<String> users = [];
-  List<List<String>> birthdays = [];
-  List<List<String>> getUpcoming(Map birthdayMap) {
-    List<List<String>> birthdays = [];
-    birthdayMap.forEach((name, data) {
-      int daysUntilBirthday = data['daysUntilBirthday'];
-      if (daysUntilBirthday < 60) {
-        birthdays.add([name, daysUntilBirthday.toString()]);
-      }
-    });
-    return birthdays;
-  }
-
   @override
   void initState() {
-    handleApi();
     super.initState();
   }
 
   void handleApi() async {
-    if (widget.groupname != "") {
-      Map groupInfo = await getGroupInfo(widget.groupname);
-      Map upcomingBirthdays = await groupBirthday(widget.groupname);
-      setState(() {
-        users = groupInfo["members"];
-        birthdays = getUpcoming(upcomingBirthdays);
-      });
-    }
-    for (int i = 0; i < widget.groupList.length; i++) {
-      Map tempgroup = await getGroupInfo(widget.groupList[i]);
-      setState(() {
-        grouplistfull.add([tempgroup["name"], tempgroup["description"]]);
-      });
-    }
+    if (widget.groupname != "") {}
+  }
+
+  void handleGroupCreation(Map groupstuff) async {
+    await newGroup(groupstuff);
+    Map groupsmaps = await groupUserList(widget.username);
+    List groupslist = groupsmaps["groups"];
+    List birthdays = birthdaysSoon(groupstuff["groupname"]);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(
+          username: widget.username,
+          groupname: groupstuff["groupname"],
+          friends: [groupstuff["members"]],
+          birthdays: birthdays,
+          groupListFull: groupslist,
+        ),
+      ),
+    );
   }
 
   @override
@@ -66,69 +58,66 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
-          child: isLoading
-              ? Container()
-              : Column(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text(
-                            "People",
-                            style: TextStyle(fontSize: 25),
+                    const Text(
+                      "People",
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    const Spacer(),
+                    FilledButton.tonal(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
-                          const Spacer(),
-                          FilledButton.tonal(
-                              style: ButtonStyle(
-                                shape:
-                                    MaterialStateProperty.all<OutlinedBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                print("CLICKED");
-                              },
-                              child: const Text('+ Add Friend')),
+                        ),
+                        onPressed: () {
+                          print("CLICKED");
+                        },
+                        child: const Text('+ Add Friend')),
+                  ],
+                ),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.friends.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          FriendTile(name: widget.friends[index]),
+                          const SizedBox(height: 10),
                         ],
-                      ),
-                      const Divider(),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: users.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                FriendTile(name: users[index]),
-                                const SizedBox(height: 10),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      const Spacer(),
-                      const Text(
-                        "Upcoming birthdays",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      const Divider(),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: birthdays.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                FriendTile(name: birthdays[index][0]),
-                                const SizedBox(height: 10),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ]),
+                      );
+                    },
+                  ),
+                ),
+                const Spacer(),
+                const Text(
+                  "Upcoming birthdays",
+                  style: TextStyle(fontSize: 25),
+                ),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.birthdays.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          FriendTile(name: widget.birthdays[index][0]),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ]),
         ),
       ),
       appBar: AppBar(
@@ -148,13 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      for (var group in grouplistfull)
+                      for (var group in widget.groupListFull)
                         Column(
                           children: [
                             FriendGroup(
-                              groupname: group[0],
-                              description: group[1],
-                              username: widget.userinfo["username"],
+                              key: UniqueKey(),
+                              groupname: group,
+                              description: "",
+                              grouplist: widget.groupListFull,
+                              username: widget.username,
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -192,21 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     TextField(
                                       onChanged: (value) {
                                         setState(() {
-                                          newgroup = "";
+                                          newgroup = value;
                                         });
                                       },
                                       decoration: const InputDecoration(
                                         labelText: 'Group Name',
-                                      ),
-                                    ),
-                                    TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          newdescription = "";
-                                        });
-                                      },
-                                      decoration: const InputDecoration(
-                                        labelText: 'Description',
                                       ),
                                     ),
                                     const SizedBox(height: 15),
@@ -226,12 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                           onPressed: () {
                                             // Navigator.pop(context);
                                             Map newgroupcreate = {
-                                              "groupname": newgroup,
-                                              "description": newdescription,
+                                              "groupname": newgroup.toString(),
+                                              "description": "",
                                               "members":
-                                                  widget.userinfo["username"]
+                                                  widget.username.toString()
                                             };
-                                            newGroup(newgroupcreate);
+                                            print("thingys: $newgroupcreate");
+                                            handleGroupCreation(newgroupcreate);
                                           },
                                           child: const Text('Create'),
                                         ),

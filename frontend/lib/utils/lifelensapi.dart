@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
-final dio = Dio();
+final dio = Dio(BaseOptions(
+  followRedirects: true,
+));
 Future<bool> checkUserExist(String? username) async {
   Response response;
   response = await dio.get(
@@ -45,12 +47,25 @@ Future<Map> getGroupInfo(String groupname) async {
   return response.data;
 }
 
-Future<String> newGroup(Map group) async {
+Future<Map> newGroup(Map group) async {
   Response response;
   response = await dio.post(
-    'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/group/new',
+    'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/newgroup',
     data: group,
+    options: Options(
+      validateStatus: (status) {
+        return status == 307; // Allow 307 status
+      },
+    ),
   );
+  // Check if it's a redirection
+  if (response.statusCode == 307) {
+    // Extract the redirection URL from response.headers
+    String redirectionUrl = response.headers['location']![0];
+
+    // Make another request to the redirection URL
+    response = await dio.post(redirectionUrl, data: group);
+  }
   print(response.data);
   return response.data;
 }
@@ -58,7 +73,7 @@ Future<String> newGroup(Map group) async {
 Future<String> addGroupMember(Map group) async {
   Response response;
   response = await dio.post(
-    'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/group/add',
+    'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/addtogroup',
     data: group,
   );
   print(response.data);

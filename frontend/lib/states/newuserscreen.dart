@@ -19,10 +19,11 @@ class _NewUserScreenState extends State<NewUserScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => HomeScreen(
-                  groupname: '',
-                  groupList: const [],
-                  userinfo: widget.user,
-                ))));
+                groupname: '',
+                groupListFull: const [],
+                friends: [],
+                birthdays: [],
+                username: widget.user["username"]))));
     super.initState();
   }
 

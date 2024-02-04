@@ -20,19 +20,18 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _initializeData() async {
     try {
-      Map fetchedUserInfo = await getUser(widget.username);
-      Map usergroupinfo = await groupUserList(widget.username) as Map;
+      print(widget.username);
+      Map usergroupinfo = await groupUserList(widget.username);
       List<dynamic> grouplist = usergroupinfo["groups"];
-      setState(() {
-        userinfo = fetchedUserInfo;
-      });
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomeScreen(
             groupname: "",
-            groupList: grouplist,
-            userinfo: userinfo,
+            friends: [],
+            birthdays: [],
+            groupListFull: grouplist,
+            username: widget.username,
           ),
         ),
       );
