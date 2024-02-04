@@ -27,7 +27,7 @@ Future<Map> addUser(Map user) async {
   return response.data;
 }
 
-Future<Map> getUser(String username) async {
+Future<Map> getUser(String? username) async {
   Response response;
   response = await dio.get(
     'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/get/$username',
@@ -65,7 +65,7 @@ Future<String> addGroupMember(Map group) async {
   return response.data;
 }
 
-Future<Map> groupUserList(String username) async {
+Future<Map> groupUserList(String? username) async {
   Response response;
   response = await dio.get(
     'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/grouplist/$username',

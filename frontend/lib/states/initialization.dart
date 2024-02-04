@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/states/authpage.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:lifelens/states/namecreation.dart';
 import 'package:lifelens/utils/lifelensapi.dart';
@@ -110,7 +110,8 @@ class _InitializationScreenState extends State<InitializationScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomeScreen(groupname: "haha"),
+            builder: (context) =>
+                AuthPage(username: _credentials?.user.nickname),
           ),
         );
       } else {
