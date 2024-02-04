@@ -279,7 +279,7 @@ async def get_group_by_name(groupname: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/group/new/")
+@app.post("/newgroup/")
 def add_user(record: NewGroup):
     url = "https://lifelens.kintone.com/k/v1/record.json"
     data = {
@@ -308,7 +308,7 @@ def add_user(record: NewGroup):
         return {"error": str(e)}
 
 
-@app.put("/group/add/")
+@app.put("/addtogroup/")
 def add_user(record: AddMember):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
     headers = {"X-Cybozu-API-Token": KINTONE_GROUP}
