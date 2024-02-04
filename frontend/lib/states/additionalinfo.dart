@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/newuserscreen.dart';
 
 class AdditionalInfoPage extends StatefulWidget {
   final Map user;
@@ -178,7 +179,17 @@ class _AdditionalInfoPageState extends State<AdditionalInfoPage>
                           ? null
                           : () {
                               formatTextValues();
-                              print(formattedValues.toString());
+                              widget.user["questions"] = formattedValues;
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NewUserScreen(
+                                    user: widget.user,
+                                  ),
+                                ),
+                                (Route<dynamic> route) => route
+                                    is NewUserScreen, // Keep NewUserScreen on the stack
+                              );
                             },
                       child: Text("Next")))
             ],

@@ -44,7 +44,8 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
   String selectedDay = "";
   String selectedMonth = "";
   String selectedYear = "";
-  RegExp regex = RegExp(r'^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/\d{4}$');
+  RegExp regex =
+      RegExp(r'^((19|20)\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$');
   @override
   String? get restorationId => widget.restorationId;
 
@@ -89,10 +90,18 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
     if (newSelectedDate != null) {
       setState(() {
         _selectedDate.value = newSelectedDate;
-        selectedDay = _selectedDate.value.day.toString();
-        selectedMonth = _selectedDate.value.month.toString();
+        if (_selectedDate.value.day < 10) {
+          selectedDay = "0${_selectedDate.value.day}";
+        } else {
+          selectedDay = _selectedDate.value.day.toString();
+        }
+        if (_selectedDate.value.month < 10) {
+          selectedMonth = "0${_selectedDate.value.month}";
+        } else {
+          selectedMonth = _selectedDate.value.month.toString();
+        }
         selectedYear = _selectedDate.value.year.toString();
-        _controller.text = "$selectedDay/$selectedMonth/$selectedYear";
+        _controller.text = "$selectedYear-$selectedMonth-$selectedDay";
         birthday = _controller.text;
       });
     }
@@ -136,7 +145,7 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                 });
               },
               decoration: InputDecoration(
-                helperText: "DD/MM/YYYY",
+                helperText: "YYYY-MM-DD",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () {
