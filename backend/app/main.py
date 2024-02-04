@@ -133,6 +133,7 @@ async def add_user(record: NewUser):
     for arr in record.questions:
         questions_str += arr[0] + "|" + arr[1] + "|"
     questions_str = questions_str[:-1]
+    print(questions_str)
 
     data = {
         "app": 3,
@@ -160,9 +161,11 @@ async def add_user(record: NewUser):
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            raise HTTPException(status_code=207, detail="fields already exists")
+            return {"status_code": response.status_code}
+            # raise HTTPException(status_code=207, detail="fields alrefhsfshady exists")
     except Exception as e:
-        return {"error": str(e)}
+        print(e)
+        return {"error": e}
 
 
 # @app.get("/users/")
@@ -200,7 +203,7 @@ async def add_user(record: NewUser):
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/user/{username}")
+@app.get("/get/{username}")
 async def get_user_by_username(username: str):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
     headers = {"X-Cybozu-API-Token": KINTONE_USER}
