@@ -21,6 +21,7 @@ class NewUser(BaseModel):
     interests: str
     username: str
     phone_number: str
+    questions: list[list[str]]
 
 
 class ModifyUser(BaseModel):
@@ -28,6 +29,7 @@ class ModifyUser(BaseModel):
     address: str
     food_restrictions: list[str]
     interests: str
+    questions: list[list[str]]
 
 
 class NewGroup(BaseModel):
@@ -85,6 +87,12 @@ async def change_user_data(new_data: ModifyUser):
                     id = _record["$id"]["value"]
             if id == -1:
                 raise HTTPException(status_code=201, detail="group now found")
+
+            questions_str = ""
+            for arr in new_data.questions:
+                questions_str += arr[0] + "|" + arr[1] + "|"
+            questions_str = questions_str[:-1]
+
             data = {
                 "app": 3,
                 "id": id,
@@ -94,6 +102,7 @@ async def change_user_data(new_data: ModifyUser):
                         "value": new_data.food_restrictions,
                     },
                     "interests": {"value": new_data.interests},
+                    "questions": {"value": questions_str},
                 },
             }
             kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
@@ -117,6 +126,11 @@ async def change_user_data(new_data: ModifyUser):
 @app.post("/user/add/")
 async def add_user(record: NewUser):
     url = "https://lifelens.kintone.com/k/v1/record.json"
+    questions_str = ""
+    for arr in record.questions:
+        questions_str += arr[0] + "|" + arr[1] + "|"
+    questions_str = questions_str[:-1]
+
     data = {
         "app": 3,
         "record": {
@@ -129,6 +143,7 @@ async def add_user(record: NewUser):
             "interests": {"value": record.interests},
             "phone_number": {"value": record.phone_number},
             "username": {"value": record.username},
+            "questions": {"value": questions_str},
         },
     }
 
@@ -138,6 +153,7 @@ async def add_user(record: NewUser):
     }
     try:
         response = requests.post(url, json=data, headers=headers)
+        return response.json()
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
@@ -146,39 +162,39 @@ async def add_user(record: NewUser):
         return {"error": str(e)}
 
 
-@app.get("/users/")
-async def get_all_users():
-    kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
-    headers = {"X-Cybozu-API-Token": KINTONE_USER}
-    try:
-        response = requests.get(kintone_url, headers=headers)
-        if response.status_code == 200:
-            original_data = response.json()
-            transformed_data = {}
-            for record in original_data["records"]:
-                username = record["username"]["value"]
-                user_info = {
-                    "id": record["$id"]["value"],
-                    "first_name": record["first_name"]["value"],
-                    "last_name": record["last_name"]["value"],
-                    "address": record["address"]["value"],
-                    "birthday": record["birthday"]["value"],
-                    "food_restrictions": [
-                        restriction.capitalize()
-                        for restriction in record["food_restrictions"]["value"]
-                    ],
-                    "interests": record["interests"]["value"],
-                    "phone_number": record["phone_number"]["value"],
-                }
-                transformed_data[username] = user_info
-            return transformed_data
-        else:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail="Failed to fetch data from Kintone API",
-            )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.get("/users/")
+# async def get_all_users():
+#     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=3"
+#     headers = {"X-Cybozu-API-Token": KINTONE_USER}
+#     try:
+#         response = requests.get(kintone_url, headers=headers)
+#         if response.status_code == 200:
+#             original_data = response.json()
+#             transformed_data = {}
+#             for record in original_data["records"]:
+#                 username = record["username"]["value"]
+#                 user_info = {
+#                     "id": record["$id"]["value"],
+#                     "first_name": record["first_name"]["value"],
+#                     "last_name": record["last_name"]["value"],
+#                     "address": record["address"]["value"],
+#                     "birthday": record["birthday"]["value"],
+#                     "food_restrictions": [
+#                         restriction.capitalize()
+#                         for restriction in record["food_restrictions"]["value"]
+#                     ],
+#                     "interests": record["interests"]["value"],
+#                     "phone_number": record["phone_number"]["value"],
+#                 }
+#                 transformed_data[username] = user_info
+#             return transformed_data
+#         else:
+#             raise HTTPException(
+#                 status_code=response.status_code,
+#                 detail="Failed to fetch data from Kintone API",
+#             )
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/user/{username}")
@@ -192,6 +208,18 @@ async def get_user_by_username(username: str):
             for record in original_data["records"]:
                 _username = record["username"]["value"]
                 if _username == username:
+                    _questions = record["questions"]["value"].split("|")
+                    qs_size = len(_questions)
+                    if qs_size % 2 == 1:
+                        raise HTTPException(
+                            status_code=201, detail="invalid input type"
+                        )
+                    questions_double_ar = []
+                    for index in range(0, qs_size, 2):
+                        questions_double_ar.append(
+                            [_questions[index], _questions[index + 1]]
+                        )
+
                     user_info = {
                         "id": record["$id"]["value"],
                         "first_name": record["first_name"]["value"],
@@ -204,6 +232,7 @@ async def get_user_by_username(username: str):
                         ],
                         "interests": record["interests"]["value"],
                         "phone_number": record["phone_number"]["value"],
+                        "questions": questions_double_ar,
                     }
                     return user_info
             return {}
