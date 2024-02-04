@@ -47,6 +47,7 @@ class _FriendGroupState extends State<FriendGroup> {
       setState(() {
         friends = friendsmap["members"];
         isLoading = false;
+        print("FG: " + friends.toString());
       });
     }
   }

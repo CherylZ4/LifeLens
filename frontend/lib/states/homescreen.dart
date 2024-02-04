@@ -24,8 +24,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String newgroup = "";
+  String newfriend = "";
+  List localfriends = [];
   @override
   void initState() {
+    print("widget friends " + widget.friends.toString());
+    localfriends = widget.friends;
     super.initState();
   }
 
@@ -50,6 +54,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void handleFriendCreation(String username) async {
+    try {
+      Map body = {"new_username": username, "groupname": widget.groupname};
+      print(body);
+      Map response = await addGroupMember(body);
+      print(localfriends.toString());
+      setState(() {
+        localfriends = List.from(response[
+            "members"]); // Ensure you're creating a new list to trigger a rebuild
+      });
+      print(localfriends.toString());
+    } catch (e) {
+      print("error happened when adding fren");
+      print(e);
+    }
   }
 
   @override
@@ -78,27 +99,81 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        onPressed: () {
-                          print("CLICKED");
-                        },
+                        onPressed: () => showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) => Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        30, 30, 30, 30),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        const Text(
+                                          'Add friend',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        TextField(
+                                          onChanged: (value) {
+                                            setState(() {
+                                              newfriend = value;
+                                            });
+                                          },
+                                          decoration: const InputDecoration(
+                                            labelText: 'Username',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 15),
+                                        Row(
+                                          children: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  newfriend = "";
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Close'),
+                                            ),
+                                            const Spacer(),
+                                            FilledButton(
+                                              onPressed: () {
+                                                handleFriendCreation(newfriend);
+                                                // newfriend = "";
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Add'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )),
                         child: const Text('+ Add Friend')),
                   ],
                 ),
                 const Divider(),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: widget.friends.length,
+                    itemCount: localfriends.length,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          FriendTile(name: widget.friends[index]),
+                          FriendTile(name: localfriends[index]),
                           const SizedBox(height: 10),
                         ],
                       );
                     },
                   ),
                 ),
-                const Spacer(),
                 const Text(
                   "Upcoming birthdays",
                   style: TextStyle(fontSize: 25),

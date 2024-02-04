@@ -70,14 +70,36 @@ Future<Map> newGroup(Map group) async {
   return response.data;
 }
 
-Future<String> addGroupMember(Map group) async {
-  Response response;
-  response = await dio.post(
-    'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/addtogroup',
-    data: group,
-  );
-  print(response.data);
-  return response.data;
+Future<Map<String, dynamic>> addGroupMember(Map group) async {
+  try {
+    Response response = await Dio().post(
+      'http://ec2-35-182-44-172.ca-central-1.compute.amazonaws.com:8000/addtogroup',
+      data: group,
+      options: Options(
+        validateStatus: (status) {
+          return status == 307; // Allow 307 status
+        },
+        headers: {
+          'Content-Type':
+              'application/json', // Adjust based on actual content type
+        },
+      ),
+    );
+
+    if (response.statusCode == 307) {
+      // Extract the redirection URL from response.headers
+      String redirectionUrl = response.headers['location']![0];
+
+      // Make another request to the redirection URL using POST
+      response = await dio.post(redirectionUrl, data: group);
+    }
+    print(response.data);
+    return response.data;
+  } catch (e) {
+    print('Error: $e');
+    // Handle the error, log additional details, or rethrow if needed
+    throw e;
+  }
 }
 
 Future<Map> groupUserList(String? username) async {
