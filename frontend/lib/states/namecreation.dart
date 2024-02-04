@@ -103,6 +103,7 @@ class _NameCreationState extends State<NameCreation>
                             user["first_name"] = nameParts[0];
                             user["last_name"] = nameParts[1];
                             user["email"] = widget.email;
+                            user["interests"] = widget.email;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

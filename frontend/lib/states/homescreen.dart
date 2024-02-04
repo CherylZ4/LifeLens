@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lifelens/utils/birthdaysoon.dart';
 import 'package:lifelens/utils/lifelensapi.dart';
+import 'package:lifelens/widget/birthdaytile.dart';
 import 'package:lifelens/widget/friendgroup.dart';
 import 'package:lifelens/widget/friendtile.dart';
 
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController groupNameController = TextEditingController();
   String newgroup = "";
   String newfriend = "";
   List localfriends = [];
@@ -185,7 +187,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          FriendTile(name: widget.birthdays[index][0]),
+                          BirthdayTile(
+                            name: widget.birthdays[index][0],
+                            days: widget.birthdays[index][1],
+                          ),
                           const SizedBox(height: 10),
                         ],
                       );
@@ -228,7 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                const Spacer(),
                 SizedBox(
                   width: double.maxFinite,
                   child: FilledButton(
@@ -256,11 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(fontSize: 20),
                                     ),
                                     TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          newgroup = value;
-                                        });
-                                      },
+                                      controller: groupNameController,
                                       decoration: const InputDecoration(
                                         labelText: 'Group Name',
                                       ),
@@ -271,8 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         TextButton(
                                           onPressed: () {
                                             setState(() {
-                                              newgroup = "";
+                                              groupNameController.text = "";
                                             });
+
                                             Navigator.pop(context);
                                           },
                                           child: const Text('Close'),
@@ -282,7 +283,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           onPressed: () {
                                             // Navigator.pop(context);
                                             Map newgroupcreate = {
-                                              "groupname": newgroup.toString(),
+                                              "groupname":
+                                                  groupNameController.text,
                                               "description": "",
                                               "members":
                                                   widget.username.toString()

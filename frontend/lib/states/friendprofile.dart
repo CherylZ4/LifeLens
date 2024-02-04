@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/utils/lifelensapi.dart';
 
 class FriendProfile extends StatefulWidget {
   final String name;
@@ -12,8 +13,28 @@ class FriendProfile extends StatefulWidget {
 }
 
 class _FriendProfileState extends State<FriendProfile> {
+  Map info = {};
+  bool isLoading = true;
+  @override
+  void initState() {
+    handleApi();
+    super.initState();
+  }
+
+  void handleApi() async {
+    Map response = await getUser(widget.name);
+    setState(() {
+      info = response;
+      isLoading = false;
+    });
+    print(response);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold();
+    }
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -28,7 +49,7 @@ class _FriendProfileState extends State<FriendProfile> {
                 child: Text(widget.name.substring(0, 1).toUpperCase()),
               ),
               title: Text(
-                widget.name,
+                info["first_name"] + " " + info["last_name"],
                 style: TextStyle(fontSize: 25),
               ),
             ),
@@ -41,14 +62,14 @@ class _FriendProfileState extends State<FriendProfile> {
               children: <Widget>[
                 ActionChip(
                   avatar: const Icon(Icons.face),
-                  label: const Text('He/Him'),
+                  label: Text(info["pronoun"]),
                   onPressed: () {
                     print("pog");
                   },
                 ),
                 ActionChip(
                   avatar: const Icon(Icons.celebration),
-                  label: const Text('September 30, 2004'),
+                  label: Text(info["birthday"]),
                   onPressed: () {
                     print("pog");
                   },
@@ -65,12 +86,12 @@ class _FriendProfileState extends State<FriendProfile> {
             const SizedBox(
               height: 20,
             ),
-            const Card(
+            Card(
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Text(
                       "Contact",
@@ -79,25 +100,42 @@ class _FriendProfileState extends State<FriendProfile> {
                   ),
                   ListTile(
                     leading: Icon(Icons.email),
-                    title: Text('conradmo78@gmail.com'),
+                    title: Text(info["interests"]),
                   ),
                   ListTile(
                     leading: Icon(Icons.phone),
-                    title: Text('647-674-4488'),
+                    title: Text(info["phone_number"]),
                   ),
                   ListTile(
                     leading: Icon(Icons.house),
-                    title: Text('151 Stonebridge Drive'),
+                    title: Text(info["address"]),
                   ),
                 ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.food_bank),
-              title: Text('Food Restriction?'),
-              subtitle: Text("None"),
-              trailing:
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+            Expanded(
+              child: ListView.builder(
+                itemCount: info["questions"].length,
+                itemBuilder: (
+                  context,
+                  index,
+                ) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.question_mark),
+                        title: Text(info["questions"][index][0]),
+                        subtitle: Text(info["questions"][index][1]),
+                        trailing: IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.edit)),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  );
+                },
+              ),
             ),
           ],
         ),

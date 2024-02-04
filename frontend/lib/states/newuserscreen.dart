@@ -14,7 +14,6 @@ class _NewUserScreenState extends State<NewUserScreen> {
   @override
   void initState() {
     widget.user["food_restrictions"] = [];
-    widget.user["interests"] = "";
     addUser(widget.user).whenComplete(() => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
