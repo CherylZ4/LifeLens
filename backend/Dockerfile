@@ -6,6 +6,8 @@ WORKDIR /python-docker
 
 # 
 COPY /backend/requirements.txt requirements.txt
+
+COPY /backend/apikeys.py apikeys.py
 # 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
