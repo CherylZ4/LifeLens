@@ -22,6 +22,7 @@ class NewUser(BaseModel):
     username: str
     phone_number: str
     questions: list[list[str]]
+    pronoun: str
 
 
 class ModifyUser(BaseModel):
@@ -30,6 +31,7 @@ class ModifyUser(BaseModel):
     food_restrictions: list[str]
     interests: str
     questions: list[list[str]]
+    pronoun: str
 
 
 class NewGroup(BaseModel):
@@ -103,6 +105,7 @@ async def change_user_data(new_data: ModifyUser):
                     },
                     "interests": {"value": new_data.interests},
                     "questions": {"value": questions_str},
+                    "pronoun": {"value": new_data.pronoun},
                 },
             }
             kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
@@ -136,6 +139,7 @@ async def add_user(record: NewUser):
         "record": {
             "first_name": {"value": record.first_name},
             "last_name": {"value": record.last_name},
+            "pronoun": {"value": record.pronoun},
             "email": {"value": record.email},
             "birthday": {"value": record.birthday},
             "address": {"value": record.address},
@@ -153,11 +157,10 @@ async def add_user(record: NewUser):
     }
     try:
         response = requests.post(url, json=data, headers=headers)
-        return response.json()
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"error": response.status_code}
+            raise HTTPException(status_code=207, detail="fields already exists")
     except Exception as e:
         return {"error": str(e)}
 
@@ -224,6 +227,7 @@ async def get_user_by_username(username: str):
                         "id": record["$id"]["value"],
                         "first_name": record["first_name"]["value"],
                         "last_name": record["last_name"]["value"],
+                        "pronoun": record["pronoun"]["value"],
                         "address": record["address"]["value"],
                         "birthday": record["birthday"]["value"],
                         "food_restrictions": [
