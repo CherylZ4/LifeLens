@@ -31,6 +31,7 @@ class ModifyUser(BaseModel):
     food_restrictions: list[str]
     interests: str
     questions: list[list[str]]
+    pronoun: str
 
 
 class NewGroup(BaseModel):
@@ -104,6 +105,7 @@ async def change_user_data(new_data: ModifyUser):
                     },
                     "interests": {"value": new_data.interests},
                     "questions": {"value": questions_str},
+                    "pronoun": {"value": new_data.pronoun},
                 },
             }
             kintone_url_2 = "https://lifelens.kintone.com/k/v1/record.json"
