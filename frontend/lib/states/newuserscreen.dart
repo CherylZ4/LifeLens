@@ -18,8 +18,10 @@ class _NewUserScreenState extends State<NewUserScreen> {
     addUser(widget.user).whenComplete(() => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => const HomeScreen(
+            builder: (context) => HomeScreen(
                   groupname: '',
+                  groupList: const [],
+                  userinfo: widget.user,
                 ))));
     super.initState();
   }

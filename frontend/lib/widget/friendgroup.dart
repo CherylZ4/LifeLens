@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/utils/lifelensapi.dart';
 
 class FriendGroup extends StatefulWidget {
+  final String? username;
   final String groupname;
   final String description;
 
   const FriendGroup(
-      {super.key, required this.groupname, required this.description});
+      {super.key,
+      required this.groupname,
+      required this.username,
+      required this.description});
 
   @override
   State<FriendGroup> createState() => _FriendGroupState();
 }
 
 class _FriendGroupState extends State<FriendGroup> {
+  List<String> grouplist = [];
+  Map userinfo = {};
+  @override
+  void initState() {
+    Map usergroupinfo = groupUserList(widget.username) as Map;
+    setState(() {
+      userinfo = getUser(widget.username) as Map;
+      grouplist = usergroupinfo["groups"];
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -20,7 +37,11 @@ class _FriendGroupState extends State<FriendGroup> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => HomeScreen(groupname: widget.groupname)));
+                builder: (context) => HomeScreen(
+                      groupname: widget.groupname,
+                      userinfo: userinfo,
+                      groupList: grouplist,
+                    )));
       },
       shape: RoundedRectangleBorder(
         side: BorderSide(

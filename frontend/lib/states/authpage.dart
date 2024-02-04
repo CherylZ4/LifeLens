@@ -11,22 +11,35 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  Map userinfo = {};
   @override
   void initState() {
-    Map userinfo = getUser(widget.username) as Map;
-    Map usergroupinfo = groupUserList(widget.username) as Map;
-    List<String> grouplist = usergroupinfo["groups"];
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeScreen(
-          groupname: "",
-          groupList: grouplist,
-          userinfo: userinfo,
-        ),
-      ),
-    );
+    _initializeData();
     super.initState();
+  }
+
+  Future<void> _initializeData() async {
+    try {
+      Map fetchedUserInfo = await getUser(widget.username);
+      Map usergroupinfo = await groupUserList(widget.username) as Map;
+      List<dynamic> grouplist = usergroupinfo["groups"];
+      setState(() {
+        userinfo = fetchedUserInfo;
+      });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(
+            groupname: "",
+            groupList: grouplist,
+            userinfo: userinfo,
+          ),
+        ),
+      );
+    } catch (error) {
+      // Handle errors if needed
+      print('Error initializing data: $error');
+    }
   }
 
   @override
@@ -48,7 +61,7 @@ class _AuthPageState extends State<AuthPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Text("Saving preferences"),
+                Text("Logging in"),
               ],
             ),
           ),
