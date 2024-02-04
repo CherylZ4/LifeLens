@@ -30,23 +30,18 @@ class _FriendGroupState extends State<FriendGroup> {
     super.initState();
   }
 
-  @override
-  void didUpdateWidget(FriendGroup oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    handleFriendGroupState();
-  }
-
   void handleFriendGroupState() async {
     if (mounted) {
       setState(() {
         isLoading = true; // Set loading state to true
       });
       Map friendsmap = await getGroupInfo(widget.groupname);
-      birthdays = birthdaysSoon(widget.groupname);
+      birthdays = await birthdaysSoon(widget.groupname);
 
       setState(() {
         friends = friendsmap["members"];
         isLoading = false;
+        print("bday " + birthdays.toString());
         print("FG: " + friends.toString());
       });
     }

@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await newGroup(groupstuff);
     Map groupsmaps = await groupUserList(widget.username);
     List groupslist = groupsmaps["groups"];
-    List birthdays = birthdaysSoon(groupstuff["groupname"]);
+    List birthdays = await birthdaysSoon(groupstuff["groupname"]);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -64,10 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
       print(body);
       Map response = await addGroupMember(body);
       print(localfriends.toString());
-      setState(() {
-        localfriends = List.from(response[
-            "members"]); // Ensure you're creating a new list to trigger a rebuild
-      });
+      if (mounted) {
+        setState(() {
+          localfriends = List.from(response[
+              "members"]); // Ensure you're creating a new list to trigger a rebuild
+        });
+      }
       print(localfriends.toString());
     } catch (e) {
       print("error happened when adding fren");
@@ -124,9 +126,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         TextField(
                                           onChanged: (value) {
-                                            setState(() {
-                                              newfriend = value;
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                newfriend = value;
+                                              });
+                                            }
                                           },
                                           decoration: const InputDecoration(
                                             labelText: 'Username',
@@ -137,9 +141,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: <Widget>[
                                             TextButton(
                                               onPressed: () {
-                                                setState(() {
-                                                  newfriend = "";
-                                                });
+                                                if (mounted) {
+                                                  setState(() {
+                                                    newfriend = "";
+                                                  });
+                                                }
                                                 Navigator.pop(context);
                                               },
                                               child: const Text('Close'),
@@ -270,9 +276,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       children: <Widget>[
                                         TextButton(
                                           onPressed: () {
-                                            setState(() {
-                                              groupNameController.text = "";
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                groupNameController.text = "";
+                                              });
+                                            }
 
                                             Navigator.pop(context);
                                           },
