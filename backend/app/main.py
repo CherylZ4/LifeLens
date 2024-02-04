@@ -7,7 +7,7 @@ import json
 from openai import OpenAI
 import apikeys
 
-client = OpenAI(api_key=apikeys.OPENAI_API)
+client = OpenAI(api_key=apikeys.OPENAI_API_KEY)
 app = FastAPI()
 
 
