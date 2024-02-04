@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lifelens/states/pronounscreen.dart';
 
 class NameCreation extends StatefulWidget {
-  const NameCreation({super.key});
+  final String? email;
+  final String? username;
+  const NameCreation({super.key, required this.username, required this.email});
 
   @override
   State<NameCreation> createState() => _NameCreationState();
@@ -95,11 +97,14 @@ class _NameCreationState extends State<NameCreation>
                     ),
                     onPressed: name != ""
                         ? () {
+                            Map user = {"username": widget.username};
+                            user["name"] = name;
+                            user["email"] = widget.email;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const PronounScreen()));
+                                        PronounScreen(user: user)));
                           }
                         : null,
                     child: const Text("Next")))

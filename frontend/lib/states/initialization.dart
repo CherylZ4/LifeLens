@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lifelens/states/homescreen.dart';
-import 'package:lifelens/states/namecreation.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:lifelens/states/namecreation.dart';
+import 'package:lifelens/utils/lifelensapi.dart';
 
 class InitializationScreen extends StatefulWidget {
   const InitializationScreen({super.key});
@@ -54,24 +55,27 @@ class _InitializationScreenState extends State<InitializationScreen> {
                     ),
                   ),
                 ),
-                onPressed: () async {
-                  if (_credentials == null) {
-                    try {
-                      final credentials =
-                          await auth0.webAuthentication().login();
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        if (_credentials == null) {
+                          try {
+                            final credentials =
+                                await auth0.webAuthentication().login();
 
-                      setState(() {
-                        isLoading = true;
-                        _credentials = credentials;
-                      });
-                      Timer(const Duration(seconds: 1), () {
-                        checkAndNavigate();
-                      });
-                    } catch (e) {
-                      print("failed");
-                    }
-                  }
-                },
+                            setState(() {
+                              isLoading = true;
+                              _credentials = credentials;
+                            });
+                            print(_credentials!.user.nickname);
+                            Timer(const Duration(seconds: 1), () {
+                              checkAndNavigate(context);
+                            });
+                          } catch (e) {
+                            print("failed");
+                          }
+                        }
+                      },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   child: isLoading
@@ -95,15 +99,31 @@ class _InitializationScreenState extends State<InitializationScreen> {
     );
   }
 
-  void checkAndNavigate() {
+  void checkAndNavigate(
+    BuildContext context,
+  ) async {
     if (_credentials != null) {
       // Navigate to HomeScreen when _credentials is not null
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(groupname: "haha"),
-        ),
-      );
+      bool exists = await checkUserExist(_credentials?.user.nickname);
+      if (!context.mounted) return;
+      if (exists) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(groupname: "haha"),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NameCreation(
+              username: _credentials?.user.nickname,
+              email: _credentials?.user.email,
+            ),
+          ),
+        );
+      }
     }
   }
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lifelens/states/contactinfo.dart';
 
 class DateSelectionScreen extends StatefulWidget {
-  const DateSelectionScreen({super.key, this.restorationId});
+  const DateSelectionScreen(
+      {super.key, this.restorationId, required this.user});
+  final Map user;
   final String? restorationId;
 
   @override
@@ -158,11 +160,12 @@ class _DateSelectionScreenState extends State<DateSelectionScreen>
                     ),
                     onPressed: regex.hasMatch(birthday)
                         ? () {
+                            widget.user["birthday"] = birthday;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ContactInfoPage()));
+                                        ContactInfoPage(user: widget.user)));
                           }
                         : null,
                     child: Text("Next")))
