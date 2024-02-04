@@ -23,7 +23,7 @@ jobs:
       run: |
         cd backend
         touch apikeys.py
-        echo 'OPENAI_API="${{ secrets.GPT_KEY }}"' > apikeys.py
+        echo 'OPENAI_API_KEY="${{ secrets.GPT_KEY }}"' > apikeys.py
         echo 'KINTONE_USER="${{ secrets.KINTONE_USER }}"' > apikeys.py
         echo 'KINTONE_GROUP="${{ secrets.KINTONE_GROUP }}"' > apikeys.py
         ls -a
