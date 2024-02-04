@@ -121,7 +121,7 @@ class _ContactInfoPageState extends State<ContactInfoPage>
                             phoneregex.hasMatch(phone))
                         ? () {
                             widget.user["address"] = address;
-                            widget.user["phone"] = phone;
+                            widget.user["phone_number"] = phone;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

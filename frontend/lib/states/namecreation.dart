@@ -13,6 +13,7 @@ class NameCreation extends StatefulWidget {
 class _NameCreationState extends State<NameCreation>
     with TickerProviderStateMixin {
   String name = "";
+  RegExp nameRegex = RegExp(r'^[a-zA-Z]+ [a-zA-Z]+$');
   late TextEditingController _controller;
   late AnimationController animationController;
   @override
@@ -74,7 +75,7 @@ class _NameCreationState extends State<NameCreation>
             TextField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Name',
+                labelText: 'Full Name',
               ),
               controller: _controller,
               onChanged: (value) {
@@ -95,10 +96,12 @@ class _NameCreationState extends State<NameCreation>
                         ),
                       ),
                     ),
-                    onPressed: name != ""
+                    onPressed: (name != "" && nameRegex.hasMatch(name))
                         ? () {
+                            List<String> nameParts = name.split(' ');
                             Map user = {"username": widget.username};
-                            user["name"] = name;
+                            user["first_name"] = nameParts[0];
+                            user["last_name"] = nameParts[1];
                             user["email"] = widget.email;
                             Navigator.push(
                                 context,

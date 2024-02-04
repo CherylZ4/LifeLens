@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/states/homescreen.dart';
+import 'package:lifelens/utils/lifelensapi.dart';
 
 class NewUserScreen extends StatefulWidget {
   final Map user;
@@ -11,8 +13,14 @@ class NewUserScreen extends StatefulWidget {
 class _NewUserScreenState extends State<NewUserScreen> {
   @override
   void initState() {
-    // TODO: implement initState
-
+    widget.user["food_restrictions"] = [];
+    widget.user["interests"] = "";
+    addUser(widget.user).whenComplete(() => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const HomeScreen(
+                  groupname: '',
+                ))));
     super.initState();
   }
 
