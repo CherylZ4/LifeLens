@@ -308,7 +308,7 @@ def add_user(record: NewGroup):
         return {"error": str(e)}
 
 
-@app.put("/addtogroup/")
+@app.post("/addtogroup/")
 def add_user(record: AddMember):
     kintone_url = "https://lifelens.kintone.com/k/v1/records.json?app=4"
     headers = {"X-Cybozu-API-Token": KINTONE_GROUP}
