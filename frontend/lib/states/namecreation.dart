@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lifelens/states/pronounscreen.dart';
 
 class NameCreation extends StatefulWidget {
-  const NameCreation({super.key});
+  final String? email;
+  final String? username;
+  const NameCreation({super.key, required this.username, required this.email});
 
   @override
   State<NameCreation> createState() => _NameCreationState();
@@ -11,6 +13,7 @@ class NameCreation extends StatefulWidget {
 class _NameCreationState extends State<NameCreation>
     with TickerProviderStateMixin {
   String name = "";
+  RegExp nameRegex = RegExp(r'^[a-zA-Z]+ [a-zA-Z]+$');
   late TextEditingController _controller;
   late AnimationController animationController;
   @override
@@ -72,7 +75,7 @@ class _NameCreationState extends State<NameCreation>
             TextField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Name',
+                labelText: 'Full Name',
               ),
               controller: _controller,
               onChanged: (value) {
@@ -93,13 +96,19 @@ class _NameCreationState extends State<NameCreation>
                         ),
                       ),
                     ),
-                    onPressed: name != ""
+                    onPressed: (name != "" && nameRegex.hasMatch(name))
                         ? () {
+                            List<String> nameParts = name.split(' ');
+                            Map user = {"username": widget.username};
+                            user["first_name"] = nameParts[0];
+                            user["last_name"] = nameParts[1];
+                            user["email"] = widget.email;
+                            user["interests"] = widget.email;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const PronounScreen()));
+                                        PronounScreen(user: user)));
                           }
                         : null,
                     child: const Text("Next")))

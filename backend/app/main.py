@@ -161,8 +161,7 @@ async def add_user(record: NewUser):
         if response.status_code == 200:
             return {"message": "Record added successfully"}
         else:
-            return {"status_code": response.status_code}
-            # raise HTTPException(status_code=207, detail="fields alrefhsfshady exists")
+            raise HTTPException(status_code=207, detail="fields already exists")
     except Exception as e:
         print(e)
         return {"error": e}

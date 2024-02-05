@@ -1,22 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:lifelens/utils/birthdaysoon.dart';
+import 'package:lifelens/utils/lifelensapi.dart';
+import 'package:lifelens/widget/birthdaytile.dart';
 import 'package:lifelens/widget/friendgroup.dart';
 import 'package:lifelens/widget/friendtile.dart';
 
 class HomeScreen extends StatefulWidget {
   final String groupname;
-  const HomeScreen({super.key, required this.groupname});
+  final List friends;
+  final List birthdays;
+  final List groupListFull;
+  final String? username;
+  const HomeScreen(
+      {super.key,
+      required this.groupname,
+      required this.friends,
+      required this.birthdays,
+      required this.groupListFull,
+      required this.username});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController groupNameController = TextEditingController();
+  String newgroup = "";
+  String newfriend = "";
+  List localfriends = [];
+  @override
+  void initState() {
+    print("widget friends " + widget.friends.toString());
+    localfriends = widget.friends;
+    super.initState();
+  }
+
+  void handleApi() async {
+    if (widget.groupname != "") {}
+  }
+
+  void handleGroupCreation(Map groupstuff) async {
+    await newGroup(groupstuff);
+    Map groupsmaps = await groupUserList(widget.username);
+    List groupslist = groupsmaps["groups"];
+    List birthdays = await birthdaysSoon(groupstuff["groupname"]);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(
+          username: widget.username,
+          groupname: groupstuff["groupname"],
+          friends: [groupstuff["members"]],
+          birthdays: birthdays,
+          groupListFull: groupslist,
+        ),
+      ),
+    );
+  }
+
+  void handleFriendCreation(String username) async {
+    try {
+      Map body = {"new_username": username, "groupname": widget.groupname};
+      print(body);
+      Map response = await addGroupMember(body);
+      print(localfriends.toString());
+      if (mounted) {
+        setState(() {
+          localfriends = List.from(response[
+              "members"]); // Ensure you're creating a new list to trigger a rebuild
+        });
+      }
+      print(localfriends.toString());
+    } catch (e) {
+      print("error happened when adding fren");
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
           child: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,25 +103,106 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        onPressed: () {
-                          print("CLICKED");
-                        },
+                        onPressed: () => showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) => Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        30, 30, 30, 30),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        const Text(
+                                          'Add friend',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        TextField(
+                                          onChanged: (value) {
+                                            if (mounted) {
+                                              setState(() {
+                                                newfriend = value;
+                                              });
+                                            }
+                                          },
+                                          decoration: const InputDecoration(
+                                            labelText: 'Username',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 15),
+                                        Row(
+                                          children: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                if (mounted) {
+                                                  setState(() {
+                                                    newfriend = "";
+                                                  });
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Close'),
+                                            ),
+                                            const Spacer(),
+                                            FilledButton(
+                                              onPressed: () {
+                                                handleFriendCreation(newfriend);
+                                                // newfriend = "";
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Add'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )),
                         child: const Text('+ Add Friend')),
                   ],
                 ),
-                Divider(),
-                FriendTile(name: "Conrad"),
-                SizedBox(height: 10),
-                FriendTile(name: "Sigmund"),
-                Spacer(),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: localfriends.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          FriendTile(name: localfriends[index]),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    },
+                  ),
+                ),
                 const Text(
                   "Upcoming birthdays",
                   style: TextStyle(fontSize: 25),
                 ),
-                Divider(),
-                FriendTile(name: "Conrad"),
-                SizedBox(height: 10),
-                FriendTile(name: "Sigmund"),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.birthdays.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          BirthdayTile(
+                            name: widget.birthdays[index][0],
+                            days: widget.birthdays[index][1],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ]),
         ),
       ),
@@ -68,19 +215,104 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 30, 10, 30),
             child: ListView(
-              children: const <Widget>[
-                Text('Friend Groups',
+              children: <Widget>[
+                const Text('Friend Groups',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 25)),
-                SizedBox(height: 10),
-                FriendGroup(
-                  groupname: "Ark & Co",
-                  description: "A group full of crazy ppl",
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Column(
+                    children: [
+                      for (var group in widget.groupListFull)
+                        Column(
+                          children: [
+                            FriendGroup(
+                              key: UniqueKey(),
+                              groupname: group,
+                              description: "",
+                              grouplist: widget.groupListFull,
+                              username: widget.username,
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 10),
-                FriendGroup(
-                  groupname: "Ark & Co 2",
-                  description: "A group full of crazy ppl 2",
+                SizedBox(
+                  width: double.maxFinite,
+                  child: FilledButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    onPressed: () => showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) => Dialog(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(30, 30, 30, 30),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    const Text(
+                                      'New Group',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    TextField(
+                                      controller: groupNameController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Group Name',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 15),
+                                    Row(
+                                      children: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            if (mounted) {
+                                              setState(() {
+                                                groupNameController.text = "";
+                                              });
+                                            }
+
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Close'),
+                                        ),
+                                        const Spacer(),
+                                        FilledButton(
+                                          onPressed: () {
+                                            // Navigator.pop(context);
+                                            Map newgroupcreate = {
+                                              "groupname":
+                                                  groupNameController.text,
+                                              "description": "",
+                                              "members":
+                                                  widget.username.toString()
+                                            };
+                                            print("thingys: $newgroupcreate");
+                                            handleGroupCreation(newgroupcreate);
+                                          },
+                                          child: const Text('Create'),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      child: Text('New Group', style: TextStyle(fontSize: 17)),
+                    ),
+                  ),
                 ),
               ],
             ),

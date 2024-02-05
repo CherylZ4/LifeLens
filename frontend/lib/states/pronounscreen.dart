@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lifelens/states/dateselection.dart';
 
 class PronounScreen extends StatefulWidget {
-  const PronounScreen({super.key});
+  final Map user;
+  const PronounScreen({super.key, required this.user});
 
   @override
   State<PronounScreen> createState() => _PronounScreenState();
@@ -206,11 +207,12 @@ class _PronounScreenState extends State<PronounScreen>
                       ),
                       onPressed: pronoun != ""
                           ? () {
+                              widget.user["pronoun"] = pronoun;
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DateSelectionScreen(
+                                      builder: (context) => DateSelectionScreen(
+                                            user: widget.user,
                                             restorationId: "Date1",
                                           )));
                             }
